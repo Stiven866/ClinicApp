@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <color name="colorPrimary">#00BCD4</color>
+        <color name="colorPrimaryDark">#0097A7</color>
+        <color name="colorAccent">#FFF</color>
+
+        <color name="mainApp">#00BCD4</color>
+        <color name="textApp">#FFF</color>
+        <color name="linkApp">#FFF</color>
+        <color name="btnApp">#0097A7</color>
+        <color name="indigo">#3f51b5</color>
+</resources>

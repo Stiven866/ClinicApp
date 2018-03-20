@@ -9,18 +9,19 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Login">
+        <activity android:name=".Login"></activity>
+        <activity android:name=".Register" />
+        <activity
+            android:name=".MenuProfile"
+            android:label="@string/title_activity_menu_profile"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Register" />
-        <activity
-            android:name=".MenuProfile"
-            android:label="@string/title_activity_menu_profile"
-            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

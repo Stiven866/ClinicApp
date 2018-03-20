@@ -82,10 +82,10 @@ public class Login extends AppCompatActivity {
     private void checkUserIsMedical() {
         final ProgressDialog pd = ProgressDialog.show(this,"Verificando credenciales del usurio", "Esperando respuesta");
         try{
-
+            pd.dismiss();
             if(hashMap.get("identification").equals(etIdUser.getText().toString()) ){
                 if(hashMap.get("password").equals(etPass.getText().toString())){
-                    pd.dismiss();
+
                     initApp(pd);
                 }
 

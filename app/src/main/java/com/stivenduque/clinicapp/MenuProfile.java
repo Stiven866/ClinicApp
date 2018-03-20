@@ -15,14 +15,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.Serializable;
 import java.util.Map;
 
 public class MenuProfile extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private String roleUser,nameUser,emailUser;
     TextView tvDrawerUsername, tvDrawerEmail;
+    final static int INTENT_MENU_PROFILE=2;
     Map<String, String> dataUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,8 +96,14 @@ public class MenuProfile extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id){
+            case R.id.my_profile:
+                Intent intent = new Intent(MenuProfile.this,ViewProfile.class);
+                intent.putExtra("dataUser", (Serializable) dataUser);
+                startActivityForResult(intent,INTENT_MENU_PROFILE);
+                break;
+            case R.id.close_seccion:
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -125,5 +132,13 @@ public class MenuProfile extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_user_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+    @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == INTENT_MENU_PROFILE && requestCode == RESULT_OK){
+
+        }else if (resultCode == RESULT_CANCELED){
+            Toast.makeText(MenuProfile.this, "no se puede mostrar información", Toast.LENGTH_SHORT).show();
+        }
     }
 }

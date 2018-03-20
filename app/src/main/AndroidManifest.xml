@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Login"></activity>
+        <activity android:name=".Login" />
         <activity android:name=".Register" />
         <activity
             android:name=".MenuProfile"
@@ -22,6 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ViewProfile"></activity>
     </application>
 
 </manifest>

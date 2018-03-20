@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -29,9 +30,10 @@ public class Register extends AppCompatActivity {
     Map<String, String> typeUserMap;
     Map<String, String> centersMap;
     Button btnRegister;
-    String typeUserValue;
+    String typeUserValue, sex;
+    RadioButton rbtnMale, rbtnFamale;
     int centerSelectedIndex;
-    Map<String,String> dataToRegister;
+    Map<String, String> dataToRegister;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +55,11 @@ public class Register extends AppCompatActivity {
         etPasswordRepeat = findViewById(R.id.et_register_password_repeat);
         etAge = findViewById(R.id.et_register_age);
         etCivilState = findViewById(R.id.et_register_civil_state);
-        etSex = findViewById(R.id.et_register_sex);
+        //etSex = findViewById(R.id.et_register_sex);
         etOccupation = findViewById(R.id.et_register_occupation);
         etPhone = findViewById(R.id.et_register_phone);
+        rbtnFamale = findViewById(R.id.rbFamale);
+        rbtnMale = findViewById(R.id.rbMale);
 
         spTypeUser = findViewById(R.id.register_spinner_type_user);
         spListMedicalCenters = findViewById(R.id.register_spinner_medical_center);
@@ -65,12 +69,12 @@ public class Register extends AppCompatActivity {
         typeUserMap.put("Médico", "medic");
         typeUserMap.put("Paciente", "patient");
         centersMap = new HashMap<>();
-        centersMap.put("0","SURA EPS");
-        centersMap.put("1","COMEVA");
-        centersMap.put("2","CAFÉ SALUD");
+        centersMap.put("0", "SURA EPS");
+        centersMap.put("1", "COMEVA");
+        centersMap.put("2", "CAFÉ SALUD");
     }
 
-    public void initActions(){
+    public void initActions() {
         tvGgoToLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,10 +93,10 @@ public class Register extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 typeUserValue = spTypeUser.getSelectedItem().toString();
-                if(typeUserMap.get(typeUserValue).equals("medic")){
+                if (typeUserMap.get(typeUserValue).equals("medic")) {
                     etProfessionalId.setVisibility(View.VISIBLE);
                     spListMedicalCenters.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     etProfessionalId.setVisibility(View.GONE);
                     spListMedicalCenters.setVisibility(View.GONE);
                 }
@@ -118,9 +122,10 @@ public class Register extends AppCompatActivity {
         });
 
     }
-    private void registerUser() {
 
-        if(validateRegister()){
+    private void registerUser() {
+        sexUser();
+        if (validateRegister()) {
             dataToRegister = new HashMap<>();
             dataToRegister.put("userName", etUserName.getText().toString());
             dataToRegister.put("lastName", etLastName.getText().toString());
@@ -130,7 +135,7 @@ public class Register extends AppCompatActivity {
             dataToRegister.put("password", etPassword.getText().toString());
             dataToRegister.put("age", etAge.getText().toString());
             dataToRegister.put("civilState", etCivilState.getText().toString());
-            dataToRegister.put("sex", etSex.getText().toString());
+            dataToRegister.put("sex", sex);
             dataToRegister.put("occupation", etOccupation.getText().toString());
             dataToRegister.put("phone", etPhone.getText().toString());
             dataToRegister.put("professionalId", etProfessionalId.getText().toString());
@@ -138,74 +143,83 @@ public class Register extends AppCompatActivity {
             Snackbar.make(findViewById(R.id.container_register), "Registro exitoso", Snackbar.LENGTH_SHORT).show();
             Log.d("REGISTERING", dataToRegister.toString());
             makeRequest();
-        }else{
+        } else {
 
         }
     }
 
+    private void sexUser() {
+        if (rbtnFamale.isChecked()) {
+            sex = "Mujer";
+        } else if (rbtnMale.isChecked()) {
+            sex = "Hombre";
+        }
+    }
+
     private void makeRequest() {
-        final ProgressDialog pd = ProgressDialog.show(this, "Registrando","Esperando respuesta" );
-        try{
+        final ProgressDialog pd = ProgressDialog.show(this, "Registrando", "Esperando respuesta");
+        try {
 
             Intent intent = new Intent();
             intent.putExtra("dataToRegister", (Serializable) dataToRegister);
-            setResult(RESULT_OK,intent);
+            setResult(RESULT_OK, intent);
             pd.dismiss();
-        }catch (Exception error){
+        } catch (Exception error) {
             Log.d("onError", error.getMessage());
         }
     }
 
 
-    private Boolean validateRegister(){
-        if(etUserName.getText().toString().equals("")){
+    private Boolean validateRegister() {
+        if (etUserName.getText().toString().equals("")) {
             Snackbar.make(findViewById(R.id.container_register), "Ingrese su nombre", Snackbar.LENGTH_SHORT).show();
             return false;
-        }else if(etLastName.getText().toString().equals("")){
+        } else if (etLastName.getText().toString().equals("")) {
             Snackbar.make(findViewById(R.id.container_register), "Ingrese sus apellidos", Snackbar.LENGTH_SHORT).show();
             return false;
-        }else if(etIdentification.getText().toString().equals("")){
+        } else if (etIdentification.getText().toString().equals("")) {
             Snackbar.make(findViewById(R.id.container_register), "Ingrese su identificación", Snackbar.LENGTH_SHORT).show();
             return false;
-        }else if(etEmail.getText().toString().equals("")){
+        } else if (etEmail.getText().toString().equals("")) {
             Snackbar.make(findViewById(R.id.container_register), "Ingrese su correo electrónico", Snackbar.LENGTH_SHORT).show();
             return false;
-        }
-        else if(etPassword.getText().toString().equals("")){
+        } else if (etPassword.getText().toString().equals("")) {
             Snackbar.make(findViewById(R.id.container_register), "Ingrese su contraseña", Snackbar.LENGTH_SHORT).show();
             return false;
-        }else if(etPassword.getText().toString().equals("")){
+        } else if (etPassword.getText().toString().equals("")) {
             Snackbar.make(findViewById(R.id.container_register), "Ingrese de nuevo su contraseña", Snackbar.LENGTH_SHORT).show();
             return false;
-        }else if(!etPassword.getText().toString().equals(etPasswordRepeat.getText().toString())){
+        } else if (!etPassword.getText().toString().equals(etPasswordRepeat.getText().toString())) {
             Snackbar.make(findViewById(R.id.container_register), "Las contraseñas deben coincidir", Snackbar.LENGTH_SHORT).show();
             return false;
-        }else if(etAge.getText().toString().equals("")){
+        } else if (etAge.getText().toString().equals("")) {
             Snackbar.make(findViewById(R.id.container_register), "Ingrese su edad", Snackbar.LENGTH_SHORT).show();
             return false;
-        }else if(etCivilState.getText().toString().equals("")){
+        } else if (etCivilState.getText().toString().equals("")) {
             Snackbar.make(findViewById(R.id.container_register), "Ingrese su estado civil", Snackbar.LENGTH_SHORT).show();
             return false;
-        }else if(etSex.getText().toString().equals("")){
+        } else if (!rbtnMale.isChecked() && !rbtnFamale.isChecked()) {
             Snackbar.make(findViewById(R.id.container_register), "Ingrese su sexo", Snackbar.LENGTH_SHORT).show();
             return false;
-        }else if(etOccupation.getText().toString().equals("")){
+        } else if (etOccupation.getText().toString().equals("")) {
             Snackbar.make(findViewById(R.id.container_register), "Ingrese su ocupación", Snackbar.LENGTH_SHORT).show();
             return false;
-        }else if(etPhone.getText().toString().equals("")){
+        } else if (etPhone.getText().toString().equals("")) {
             Snackbar.make(findViewById(R.id.container_register), "Ingrese su número telefónico", Snackbar.LENGTH_SHORT).show();
             return false;
-        }else if(typeUserMap.get(typeUserValue).equals("medic") && etProfessionalId.getText().toString().equals("")){
+        } else if (typeUserMap.get(typeUserValue).equals("medic") && etProfessionalId.getText().toString().equals("")) {
             Snackbar.make(findViewById(R.id.container_register), "Debe ingresar su identificación profesional", Snackbar.LENGTH_SHORT).show();
             return false;
-        }else if(typeUserMap.get(typeUserValue).equals("medic") && centerSelectedIndex<0){
+        } else if (typeUserMap.get(typeUserValue).equals("medic") && centerSelectedIndex < 0) {
             Snackbar.make(findViewById(R.id.container_register), "Debe ingresar el centro médico al que pertenece", Snackbar.LENGTH_SHORT).show();
             return false;
-        }
-        else{
+        } else {
             return true;
         }
     }
+
+
+
     private void goToLogin(){
         finish();
     }

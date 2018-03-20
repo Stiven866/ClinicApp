@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,20 +16,26 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.io.Serializable;
 import java.util.Map;
 
 public class MenuProfile extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private String roleUser;
-    public TextView tvDrawerPatientUsername, tvDrawerPatientEmail;
+    private String roleUser,nameUser,emailUser;
+    TextView tvDrawerUsername, tvDrawerEmail;
     Map<String, String> dataUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_profile);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+
+
+        Serializable extras = getIntent().getSerializableExtra("dataUser");
+        dataUser = (Map<String, String>) extras;
       /* FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -38,7 +45,7 @@ public class MenuProfile extends AppCompatActivity
             }
         });*/
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_user_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -46,23 +53,26 @@ public class MenuProfile extends AppCompatActivity
 
         NavigationView navigationView =  findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
+        //View view = navigationView.inflateHeaderView(R.layout.nav_header_menu_profile);
+        tvDrawerUsername =  headerView.findViewById(R.id.tv_drawer_user_name);
+        tvDrawerEmail = headerView.findViewById(R.id.tv_drawer_user_email);
 
-        tvDrawerPatientEmail= findViewById(R.id.drawer_patient_user_email);
-        tvDrawerPatientUsername = findViewById(R.id.drawer_patient_user_name);
-        Bundle extras = getIntent().getExtras();
-        dataUser = (Map<String, String>) extras.getSerializable("dataUser");
+
+
         if(dataUser.get("typeUser").equals("medic")){
 
         }else if(dataUser.get("typeUser").equals("patient")){
-            tvDrawerPatientUsername.setText(dataUser.get("userName"));
-            tvDrawerPatientEmail.setText(dataUser.get("email"));
+            Log.d("EYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY", dataUser.get("typeUser"));
+            tvDrawerUsername.setText(dataUser.get("userName"));
+            tvDrawerEmail.setText(dataUser.get("email"));
         }
 
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_user_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -112,7 +122,7 @@ public class MenuProfile extends AppCompatActivity
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_user_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

@@ -93,8 +93,8 @@ public class Register extends AppCompatActivity {
                     etProfessionalId.setVisibility(View.VISIBLE);
                     spListMedicalCenters.setVisibility(View.VISIBLE);
                 }else{
-                    etProfessionalId.setVisibility(View.INVISIBLE);
-                    spListMedicalCenters.setVisibility(View.INVISIBLE);
+                    etProfessionalId.setVisibility(View.GONE);
+                    spListMedicalCenters.setVisibility(View.GONE);
                 }
             }
 
@@ -146,10 +146,11 @@ public class Register extends AppCompatActivity {
     private void makeRequest() {
         final ProgressDialog pd = ProgressDialog.show(this, "Registrando","Esperando respuesta" );
         try{
-            pd.dismiss();
+
             Intent intent = new Intent();
             intent.putExtra("dataToRegister", (Serializable) dataToRegister);
             setResult(RESULT_OK,intent);
+            pd.dismiss();
         }catch (Exception error){
             Log.d("onError", error.getMessage());
         }

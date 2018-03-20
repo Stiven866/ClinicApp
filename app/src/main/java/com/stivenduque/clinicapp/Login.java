@@ -80,16 +80,15 @@ public class Login extends AppCompatActivity {
     }
 
     private void checkUserIsMedical() {
-        //final ProgressDialog pd = ProgressDialog.show(this,"Verificando credenciales del usurio", "Esperando respuesta");
+        final ProgressDialog pd = ProgressDialog.show(this,"Verificando credenciales del usurio", "Esperando respuesta");
         try{
-            Log.d("EEEEEEEEXXXXX","soy un mostro11111");
-            //pd.dismiss();
+
             if(hashMap.get("identification").equals(etIdUser.getText().toString()) ){
-                Log.d("EEEEEEEEXXXXX","soy un mostro");
                 if(hashMap.get("password").equals(etPass.getText().toString())){
-                    Log.d("EEEEEEEEXXXXX","soy un mostro");
-                    initApp();
+                    pd.dismiss();
+                    initApp(pd);
                 }
+
             }
 
 
@@ -99,9 +98,10 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    private void initApp() {
+    private void initApp(ProgressDialog pd) {
         Intent intent = new Intent(this,MenuProfile.class);
         intent.putExtra("dataUser", (Serializable) hashMap);
+        pd.dismiss();
         startActivity(intent);
         finish();
     }

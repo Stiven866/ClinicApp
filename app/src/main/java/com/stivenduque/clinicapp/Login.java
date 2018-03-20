@@ -19,13 +19,14 @@ public class Login extends AppCompatActivity {
     TextView tvGoToRegister;
     Button btnLogin;
     private static int REGISTER_REQUEST = 1;
-    Map<String, String> hashMap;
+    Map<String, String> hashMap,dataUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         initUi();
+
 
 
     }
@@ -77,6 +78,9 @@ public class Login extends AppCompatActivity {
             hashMap = (Map<String, String>) data.getSerializableExtra("dataToRegister");
             Log.d("Loging", hashMap.toString());
         }
+        if (requestCode == 2 && requestCode == RESULT_OK){
+            hashMap = (Map<String, String>) data.getSerializableExtra("dataUser");
+        }
     }
 
     private void checkUserIsMedical() {
@@ -85,8 +89,7 @@ public class Login extends AppCompatActivity {
             pd.dismiss();
             if(hashMap.get("identification").equals(etIdUser.getText().toString()) ){
                 if(hashMap.get("password").equals(etPass.getText().toString())){
-
-                    initApp(pd);
+                    initApp();
                 }
 
             }
@@ -98,12 +101,10 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    private void initApp(ProgressDialog pd) {
+    private void initApp() {
         Intent intent = new Intent(this,MenuProfile.class);
         intent.putExtra("dataUser", (Serializable) hashMap);
-        pd.dismiss();
-        startActivity(intent);
-        finish();
+        startActivityForResult(intent,2);
     }
 
 }

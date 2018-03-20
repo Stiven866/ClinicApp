@@ -103,6 +103,10 @@ public class MenuProfile extends AppCompatActivity
                 startActivityForResult(intent,INTENT_MENU_PROFILE);
                 break;
             case R.id.close_seccion:
+               Intent i = new Intent(MenuProfile.this, Login.class);
+               i.putExtra("dataUser", (Serializable) dataUser);
+               setResult(RESULT_OK,i);
+               finish();
                 break;
         }
 

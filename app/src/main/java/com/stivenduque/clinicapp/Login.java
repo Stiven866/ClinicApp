@@ -2,6 +2,7 @@ package com.stivenduque.clinicapp;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -84,12 +85,22 @@ public class Login extends AppCompatActivity {
     }
 
     private void checkUserIsMedical() {
-        final ProgressDialog pd = ProgressDialog.show(this,"Verificando credenciales del usurio", "Esperando respuesta");
+        /*ProgressDialog pd = new  ProgressDialog(Login.this);
+        pd.setMessage("Esperando respuesta");
+        pd.setTitle("Verificando credenciales del usurio");
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.show();
+        pd.setCancelable(false);*/
+
         try{
-            pd.dismiss();
+            //
             if(hashMap.get("identification").equals(etIdUser.getText().toString()) ){
                 if(hashMap.get("password").equals(etPass.getText().toString())){
+                    //Thread.sleep(1000);
                     initApp();
+                }else {
+                    Snackbar.make(findViewById(R.id.container_login), "Contraseña invalida", Snackbar.LENGTH_SHORT).show();
+
                 }
 
             }
@@ -99,6 +110,7 @@ public class Login extends AppCompatActivity {
         }catch (Exception error){
             Log.d("onError", error.getMessage());
         }
+        //pd.dismiss();
     }
 
     private void initApp() {

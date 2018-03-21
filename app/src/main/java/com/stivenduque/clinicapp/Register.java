@@ -34,6 +34,7 @@ public class Register extends AppCompatActivity {
     RadioButton rbtnMale, rbtnFamale;
     int centerSelectedIndex;
     Map<String, String> dataToRegister;
+    ProgressDialog pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +144,7 @@ public class Register extends AppCompatActivity {
             Snackbar.make(findViewById(R.id.container_register), "Registro exitoso", Snackbar.LENGTH_SHORT).show();
             Log.d("REGISTERING", dataToRegister.toString());
             makeRequest();
+            goToLogin();
         } else {
 
         }
@@ -157,16 +159,24 @@ public class Register extends AppCompatActivity {
     }
 
     private void makeRequest() {
-        final ProgressDialog pd = ProgressDialog.show(this, "Registrando", "Esperando respuesta");
+        /*pd = new  ProgressDialog(Register.this);
+        pd.setMessage("Esperando respuesta");
+        pd.setTitle("Registrando");
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.setMax(100);
+        pd.show();
+        pd.setCancelable(false);*/
         try {
 
             Intent intent = new Intent();
             intent.putExtra("dataToRegister", (Serializable) dataToRegister);
+            Thread.sleep(2000);
+            //pd.dismiss();
             setResult(RESULT_OK, intent);
-            pd.dismiss();
         } catch (Exception error) {
             Log.d("onError", error.getMessage());
         }
+
     }
 
 

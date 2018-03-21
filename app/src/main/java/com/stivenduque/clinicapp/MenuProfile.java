@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class MenuProfile extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    TextView tvDrawerUsername, tvDrawerEmail;
+    TextView tvDrawerUsername, tvDrawerEmail, tvTypeUser;
     final static int INTENT_MENU_PROFILE=2;
     Map<String, String> dataUser;
     @Override
@@ -58,15 +58,19 @@ public class MenuProfile extends AppCompatActivity
         //View view = navigationView.inflateHeaderView(R.layout.nav_header_menu_profile);
         tvDrawerUsername =  headerView.findViewById(R.id.tv_drawer_user_name);
         tvDrawerEmail = headerView.findViewById(R.id.tv_drawer_user_email);
+        tvTypeUser = headerView.findViewById(R.id.tv_drawer_user_type);
 
 
 
         if(dataUser.get("typeUser").equals("medic")){
-
+            tvDrawerUsername.setText(dataUser.get("userName"));
+            tvDrawerEmail.setText(dataUser.get("email"));
+            tvTypeUser.setText("Medico");
         }else if(dataUser.get("typeUser").equals("patient")){
             Log.d("EYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY", dataUser.get("typeUser"));
             tvDrawerUsername.setText(dataUser.get("userName"));
             tvDrawerEmail.setText(dataUser.get("email"));
+            tvTypeUser.setText("Paciente");
         }
 
     }

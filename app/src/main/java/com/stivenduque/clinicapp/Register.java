@@ -170,7 +170,7 @@ public class Register extends AppCompatActivity {
 
             Intent intent = new Intent();
             intent.putExtra("dataToRegister", (Serializable) dataToRegister);
-            Thread.sleep(2000);
+            //Thread.sleep(2000);
             //pd.dismiss();
             setResult(RESULT_OK, intent);
         } catch (Exception error) {

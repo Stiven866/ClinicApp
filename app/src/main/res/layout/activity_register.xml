@@ -10,6 +10,7 @@ android:paddingTop="@dimen/activity_vertical_margin"
 android:background="@color/mainApp"
 android:id="@+id/container_register"
 tools:context=".Register">
+
 <ScrollView
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -249,9 +250,6 @@ tools:context=".Register">
             android:inputType="number"
             android:visibility="invisible"/>
 
-
-
-
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -259,7 +257,8 @@ tools:context=".Register">
             android:text="Registrar"
             android:background="@color/colorPrimaryDark"
             android:textColor="#FFF"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            />
 
 
         <TextView

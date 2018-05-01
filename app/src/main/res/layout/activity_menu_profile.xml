@@ -12,16 +12,6 @@
         layout="@layout/app_bar_menu_profile"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="60dp">
-        <FrameLayout
-            android:id="@+id/container_patient"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="60dp"></FrameLayout>
-    </LinearLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
@@ -31,6 +21,7 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_menu_profile"
         app:menu="@menu/activity_menu_profile_drawer" />
+
 
 </android.support.v4.widget.DrawerLayout>
 

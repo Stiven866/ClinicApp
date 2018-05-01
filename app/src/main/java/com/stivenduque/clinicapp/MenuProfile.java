@@ -1,9 +1,10 @@
 package com.stivenduque.clinicapp;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -16,64 +17,78 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.Serializable;
 import java.util.Map;
+import android.support.design.widget.BottomNavigationView;
+
+import com.facebook.AccessToken;
+import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MenuProfile extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
     TextView tvDrawerUsername, tvDrawerEmail, tvTypeUser;
     final static int INTENT_MENU_PROFILE=2;
     Map<String, String> dataUser;
+    FragmentManager fragmentManager;
+    FragmentTransaction transaction;
+    BottomNavigationView bottomNavigationView;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth.AuthStateListener authStateListener;
+    private GoogleApiClient googleApiClient;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_profile);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
-
-
-        Serializable extras = getIntent().getSerializableExtra("dataUser");
-        dataUser = (Map<String, String>) extras;
-      /* FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
-
         DrawerLayout drawer = findViewById(R.id.drawer_user_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+        initDataBase();
+        bottomNavigationView = findViewById(R.id.navigationView);
+        bottomNavigationView.setOnNavigationItemReselectedListener(new BottomNavigationView.OnNavigationItemReselectedListener() {
+            @Override
+            public void onNavigationItemReselected(@NonNull MenuItem item) {
+                Fragment fragment = null;
+                switch (item.getItemId()){
+                    case R.id.my_history:
+                        fragment = new Articulos();
+                        break;
+                    case R.id.my_doctors:
+                        fragment = new Articulos();
+                        break;
+                    case  R.id.pharmacies:
+                        fragment = new Articulos();
+                        break;
+                    case R.id.medic_center:
+                        fragment = new Articulos();
+                        break;
+                }
+                replaceFragment(fragment);
+            }
+        });
 
         NavigationView navigationView =  findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
-        //View view = navigationView.inflateHeaderView(R.layout.nav_header_menu_profile);
         tvDrawerUsername =  headerView.findViewById(R.id.tv_drawer_user_name);
         tvDrawerEmail = headerView.findViewById(R.id.tv_drawer_user_email);
         tvTypeUser = headerView.findViewById(R.id.tv_drawer_user_type);
-
-
-
-        if(dataUser.get("typeUser").equals("medic")){
-            tvDrawerUsername.setText(dataUser.get("userName"));
-            tvDrawerEmail.setText(dataUser.get("email"));
-            tvTypeUser.setText("Medico");
-        }else if(dataUser.get("typeUser").equals("patient")){
-            Log.d("EYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY", dataUser.get("typeUser"));
-            tvDrawerUsername.setText(dataUser.get("userName"));
-            tvDrawerEmail.setText(dataUser.get("email"));
-            tvTypeUser.setText("Paciente");
-        }
-
+        setInitialFragment();
     }
+
 
     @Override
     public void onBackPressed() {
@@ -94,47 +109,33 @@ public class MenuProfile extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         switch (id){
             case R.id.my_profile:
-                Intent intent = new Intent(MenuProfile.this,ViewProfile.class);
-                intent.putExtra("dataUser", (Serializable) dataUser);
-                startActivityForResult(intent,INTENT_MENU_PROFILE);
                 break;
             case R.id.close_seccion:
-               Intent i = new Intent(MenuProfile.this, Login.class);
-               i.putExtra("dataUser", (Serializable) dataUser);
-               setResult(RESULT_OK,i);
-               finish();
+                logOut();
+
                 break;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        switch (item.getItemId()){
+            case R.id.nav_camera:
+                break;
+            case R.id.nav_slideshow:
+                break;
+            case R.id.nav_manage:
+                break;
+            case R.id.nav_send:
+                break;
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_user_layout);
@@ -143,10 +144,88 @@ public class MenuProfile extends AppCompatActivity
     }
     @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == INTENT_MENU_PROFILE && requestCode == RESULT_OK){
+    }
 
-        }else if (resultCode == RESULT_CANCELED){
-            Toast.makeText(MenuProfile.this, "no se puede mostrar información", Toast.LENGTH_SHORT).show();
+    private void setInitialFragment() {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.content, new Articulos());
+        fragmentTransaction.commit();
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.content, fragment);
+        fragmentTransaction.commit();
+    }
+
+
+    private void initDataBase() {
+        firebaseAuth = FirebaseAuth.getInstance();
+        authStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if(user!=null){
+                    Log.d("SESION", "sesion iniciada con email: "+ user.getEmail());
+                }else{
+                    Log.d("SESION", "sesion cerrada");
+                    goToLogin();
+                }
+            }
+        };
+        //Inicio con cuenta de Google
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail().build();
+        googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this,this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso ).build();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        /*if (AccessToken.getCurrentAccessToken() == null){
+            goToLogin();
+        }*/
+        firebaseAuth.addAuthStateListener(authStateListener);
+
+        if (firebaseAuth.getInstance().getCurrentUser() != null){
+            Log.d("User", "Usuario logueado");
+        }else {
+            logOut();
+            goToLogin();
         }
     }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (authStateListener != null){
+            firebaseAuth.removeAuthStateListener(authStateListener);
+        }
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    public void logOut() {
+        firebaseAuth.signOut();
+        Auth.GoogleSignInApi.signOut(googleApiClient);
+        FirebaseAuth.getInstance().signOut();
+        LoginManager.getInstance().logOut();
+    }
+
+
+    private void goToLogin() {
+        Intent intent = new Intent(MenuProfile.this,Login.class);
+        startActivity(intent);
+        finish();
+    }
+
 }
+
+

@@ -2,6 +2,7 @@ package com.stivenduque.clinicapp;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -32,6 +33,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.concurrent.Executor;
+
+import static android.app.Activity.RESULT_OK;
 
 
 /**
@@ -67,47 +70,20 @@ public class Articulos extends Fragment{ //implements com.android.volley.Respons
             @Override
             public void onClick(View v) {
                 //loadWebService();
-                register(etId.getText().toString(), etPass.getText().toString());
+                if (etId.getText().toString().isEmpty()){//*************************
+                    etId.setError(getString(R.string.login_error_idUser));//*************************
+                }else if (etPass.getText().toString().isEmpty()) {
+                    etPass.setError(getString(R.string.login_error_pass));
+                }
+                else {
+                    register(etId.getText().toString(), etPass.getText().toString());
+                }
+
             }
         });
         return view;
     }
 
-    /*private void loadWebService() {
-        progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("Consultando...");
-        progressDialog.show();
-        String url = "http://192.168.1.7/dbClinicApp/Consulta.php?id="+etId.getText().toString();
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
-        requestQueue.add(jsonObjectRequest);
-    }*/
-
-    /*@Override
-    public void onErrorResponse(VolleyError error) {
-        progressDialog.hide();
-        Toast.makeText(getContext(), "melo"+ error.toString(),Toast.LENGTH_SHORT).show();
-        Log.d("Hola","No se pudo registrar"+error.toString());
-
-    }
-
-
-    @Override
-    public void onResponse(JSONObject response) {
-        progressDialog.hide();
-        Toast.makeText(getContext(),"Mensaje: " +response, Toast.LENGTH_SHORT).show();
-        User user = new User();
-        JSONArray jsonArray = response.optJSONArray("User");
-        JSONObject jsonObject = null;
-        try {
-            jsonObject = jsonArray.getJSONObject(0);
-            user.setName(jsonObject.optString("name"));
-            user.setLasName(jsonObject.optString("lastName"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        tvName.setText(user.getName());
-        tvLastName.setText(user.getLasName());
-    }*/
 
     private void register(String email, String pass){
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email,pass).addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
@@ -115,6 +91,8 @@ public class Articulos extends Fragment{ //implements com.android.volley.Respons
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
                     Log.d("SESION","Cuenta Creada");
+                    Toast.makeText(getActivity(),"Cuenta Creada",Toast.LENGTH_SHORT).show();
+                    goToLogin();
                 }else{
                     if (task.getException() instanceof FirebaseAuthUserCollisionException){
                         Log.d("SESION", "Usuario ya registrado");
@@ -125,5 +103,11 @@ public class Articulos extends Fragment{ //implements com.android.volley.Respons
                 }
             }
         });
+    }
+
+    private void goToLogin(){
+        Intent intent = new Intent();
+        getActivity().setResult(RESULT_OK,intent);
+        getActivity().finish();
     }
 }

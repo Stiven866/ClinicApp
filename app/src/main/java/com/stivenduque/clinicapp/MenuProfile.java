@@ -37,10 +37,6 @@ import com.google.firebase.auth.FirebaseUser;
 public class MenuProfile extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
     TextView tvDrawerUsername, tvDrawerEmail, tvTypeUser;
-    final static int INTENT_MENU_PROFILE=2;
-    Map<String, String> dataUser;
-    FragmentManager fragmentManager;
-    FragmentTransaction transaction;
     BottomNavigationView bottomNavigationView;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
@@ -57,38 +53,38 @@ public class MenuProfile extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         initDataBase();
+        setInitialFragment();
         bottomNavigationView = findViewById(R.id.navigationView);
-        bottomNavigationView.setOnNavigationItemReselectedListener(new BottomNavigationView.OnNavigationItemReselectedListener() {
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onNavigationItemReselected(@NonNull MenuItem item) {
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment fragment = null;
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.my_history:
-                        fragment = new Articulos();
+                        fragment = new BlankFragment();
                         break;
                     case R.id.my_doctors:
-                        fragment = new Articulos();
+                        fragment = new BlankFragment2();
                         break;
-                    case  R.id.pharmacies:
-                        fragment = new Articulos();
+                    case R.id.pharmacies:
+                        fragment = new BlankFragment3();
                         break;
                     case R.id.medic_center:
-                        fragment = new Articulos();
+                        fragment = new BlankFragment4();
                         break;
                 }
                 replaceFragment(fragment);
+                return true;
             }
         });
 
-        NavigationView navigationView =  findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
-        tvDrawerUsername =  headerView.findViewById(R.id.tv_drawer_user_name);
+        tvDrawerUsername = headerView.findViewById(R.id.tv_drawer_user_name);
         tvDrawerEmail = headerView.findViewById(R.id.tv_drawer_user_email);
-        tvTypeUser = headerView.findViewById(R.id.tv_drawer_user_type);
-        setInitialFragment();
-    }
 
+    }
 
     @Override
     public void onBackPressed() {
@@ -103,7 +99,7 @@ public class MenuProfile extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_profile, menu);
+       // getMenuInflater().inflate(R.menu.menu_profile, menu);
         return true;
     }
 
@@ -114,8 +110,6 @@ public class MenuProfile extends AppCompatActivity
             case R.id.my_profile:
                 break;
             case R.id.close_seccion:
-                logOut();
-
                 break;
         }
 
@@ -127,17 +121,30 @@ public class MenuProfile extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        Fragment fragment = null;
         switch (item.getItemId()){
-            case R.id.nav_camera:
+            case R.id.nav_my_account:
+                fragment = new BlankFragment4();
                 break;
-            case R.id.nav_slideshow:
+            case R.id.nav_add_familiary:
+                fragment = new BlankFragment3();
                 break;
-            case R.id.nav_manage:
+            case R.id.nav_change_pass:
+                fragment = new BlankFragment2();
                 break;
-            case R.id.nav_send:
+            case R.id.nav_change_language:
+                fragment = new BlankFragment();
+                break;
+            case R.id.nav_close_session:
+                fragment = new BlankFragment();
+                logOut();
+                break;
+            case R.id.nav_get_out:
+                fragment = new BlankFragment();
+                finish();
                 break;
         }
-
+        replaceFragment(fragment);
         DrawerLayout drawer = findViewById(R.id.drawer_user_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -148,7 +155,7 @@ public class MenuProfile extends AppCompatActivity
 
     private void setInitialFragment() {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.content, new Articulos());
+        fragmentTransaction.add(R.id.content, new BlankFragment());
         fragmentTransaction.commit();
     }
 

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.facebook.AccessToken;
@@ -111,10 +112,12 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
                     Log.d("SESION", "Ususario iniciado correctamente");
+                    Toast.makeText(getApplicationContext(),"Cuenta Creada",Toast.LENGTH_SHORT).show();
                     initApp();
                 }else{
 
                     Log.d("SESION", task.getException().getMessage()+"");
+                    Toast.makeText(getApplicationContext(),task.getException().getMessage(),Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -153,26 +156,16 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
                         }else {
                             if (task.getException() instanceof FirebaseAuthUserCollisionException){
                                 Log.d("SESION WHIT GOOGLE", "Usuario ya registrado");
+                                Toast.makeText(getApplicationContext(),"Usuario ya registrado",Toast.LENGTH_SHORT).show();
                                 FirebaseAuth.getInstance().signOut();
                                 LoginManager.getInstance().logOut();
                             }else{
                                 Log.d("SESION WHIT GOOGLE","Error en la cuenta");
+                                Toast.makeText(getApplicationContext(),"Error en la cuenta",Toast.LENGTH_SHORT).show();
+
                             }
                         }
 
-
-                        /*if (task.isSuccessful()) {
-                           // Log.d("SESION WHIT GOOGLE","Error al registrar");
-                        } else {
-                            if (task.getException() instanceof FirebaseAuthUserCollisionException){
-                                Log.d("SESION WHIT GOOGLE", "Usuario ya registrado");
-                                FirebaseAuth.getInstance().signOut();
-                                LoginManager.getInstance().logOut();
-                            }else{
-                                Log.d("SESION WHIT GOOGLE","Error en la cuenta");
-                            }
-
-                        }*/
                     }
                 });
     }
@@ -249,10 +242,12 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
                 }else {
                     if (task.getException() instanceof FirebaseAuthUserCollisionException){
                         Log.d("SESION WHIT FACEBOOK", "Usuario ya registrado");
+                        Toast.makeText(getApplicationContext(),"Usuario ya registrado",Toast.LENGTH_SHORT).show();
                         FirebaseAuth.getInstance().signOut();
                         LoginManager.getInstance().logOut();
                     }else{
                         Log.d("SESION WHIT FACEBOOK","Error en la cuenta");
+                        Toast.makeText(getApplicationContext(),"Error en la cuenta",Toast.LENGTH_SHORT).show();
                     }
                 }
 

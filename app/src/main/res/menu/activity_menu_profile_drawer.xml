@@ -5,19 +5,19 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/nav_my_account"
             android:icon="@drawable/ic_person"
             android:title="Mi cuenta" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_add_familiary"
             android:icon="@drawable/ic_person_add"
-            android:title="Agegar familiar" />
+            android:title="Agegar family" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_change_pass"
             android:icon="@drawable/ic_lock_two"
             android:title="Cambiar contraseña" />
         <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/nav_change_language"
             android:icon="@drawable/ic_traductor"
             android:title="Cambiar idioma" />
     </group>
@@ -25,11 +25,11 @@
     <item android:title="close session">
         <menu>
             <item
-                android:id="@+id/nav_share"
+                android:id="@+id/nav_close_session"
                 android:icon="@drawable/ic_exit_to_app"
                 android:title="Cerrar sesion" />
             <item
-                android:id="@+id/nav_send"
+                android:id="@+id/nav_get_out"
                 android:icon="@drawable/ic_power_settings_new"
                 android:title="Salir" />
         </menu>

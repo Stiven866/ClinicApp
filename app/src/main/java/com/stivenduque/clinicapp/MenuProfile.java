@@ -115,9 +115,7 @@ public class MenuProfile extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-
-
-
+    
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -165,7 +163,6 @@ public class MenuProfile extends AppCompatActivity
         fragmentTransaction.commit();
     }
 
-
     private void initDataBase() {
         firebaseAuth = FirebaseAuth.getInstance();
         authStateListener = new FirebaseAuth.AuthStateListener() {
@@ -191,9 +188,7 @@ public class MenuProfile extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        /*if (AccessToken.getCurrentAccessToken() == null){
-            goToLogin();
-        }*/
+
         firebaseAuth.addAuthStateListener(authStateListener);
 
         if (firebaseAuth.getInstance().getCurrentUser() != null){
@@ -203,7 +198,6 @@ public class MenuProfile extends AppCompatActivity
             goToLogin();
         }
     }
-
 
     @Override
     protected void onStop() {
@@ -225,7 +219,6 @@ public class MenuProfile extends AppCompatActivity
         FirebaseAuth.getInstance().signOut();
         LoginManager.getInstance().logOut();
     }
-
 
     private void goToLogin() {
         Intent intent = new Intent(MenuProfile.this,Login.class);

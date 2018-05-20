@@ -93,27 +93,17 @@ public class PatientFragment extends Fragment implements com.android.volley.Resp
         etLastName = view.findViewById(R.id.et_register_lastnames);
         etEmail = view.findViewById(R.id.et_register_email);
         etIdentification = view.findViewById(R.id.et_register_identification);
-        //etProfessionalId = view.findViewById(R.id.et_register_professionalid);
         etPassword = view.findViewById(R.id.et_register_password);
         etPasswordRepeat = view.findViewById(R.id.et_register_password_repeat);
         etAge = view.findViewById(R.id.et_register_age);
         etCivilState = view.findViewById(R.id.et_register_civil_state);
-        //etOccupation = findViewById(R.id.et_register_occupation);
         etPhone = view.findViewById(R.id.et_register_phone);
         rbtnFamale = view.findViewById(R.id.rbFamale);
         rbtnMale = view.findViewById(R.id.rbMale);
 
-        //spTypeUser = findViewById(R.id.register_spinner_type_user);
-        //spListMedicalCenters = findViewById(R.id.register_spinner_medical_center);
         tvGgoToLogin = view.findViewById(R.id.txv_goto_login);
         btnRegister = view.findViewById(R.id.btn_register);
-        /*typeUserMap = new HashMap<>();
-        typeUserMap.put("Médico", "medic");
-        typeUserMap.put("Paciente", "patient");
-        centersMap = new HashMap<>();
-        centersMap.put("0", "SURA EPS");
-        centersMap.put("1", "COMEVA");
-        centersMap.put("2", "CAFÉ SALUD");*/
+
 
         request = Volley.newRequestQueue(getContext());
     }
@@ -235,7 +225,7 @@ public class PatientFragment extends Fragment implements com.android.volley.Resp
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Cargando...");
         progressDialog.show();
-        String url = "http://192.168.1.7/dbClinicApp/Register.php?name="+dataToRegister.get("userName").toString()+
+        String url = getResources().getString(R.string.url)+"Register.php?name="+dataToRegister.get("userName").toString()+
                 "&lastName="+dataToRegister.get("lastName").toString()+"&id="+dataToRegister.get("identification").toString()+
                 "&email="+dataToRegister.get("email").toString()+"&password="+dataToRegister.get("password").toString()+
                 "&age="+dataToRegister.get("age").toString()+"&sex="+dataToRegister.get("sex").toString()+"&phone="+dataToRegister.get("phone").toString();
@@ -246,29 +236,36 @@ public class PatientFragment extends Fragment implements com.android.volley.Resp
     }
 
     private Boolean validateRegister() {
-        if (etUserName.getText().toString().equals("")) {
+        if (etUserName.getText().toString().isEmpty()) {
             Snackbar.make(getView(), "Ingrese su nombre", Snackbar.LENGTH_SHORT).show();
+            etUserName.setError("Ingrese su nombre");
             return false;
-        } else if (etLastName.getText().toString().equals("")) {
+        } else if (etLastName.getText().toString().isEmpty()) {
             Snackbar.make(getView(), "Ingrese sus apellidos", Snackbar.LENGTH_SHORT).show();
+            etLastName.setError("Ingrese sus apellidos");
             return false;
-        } else if (etIdentification.getText().toString().equals("")) {
+        } else if (etIdentification.getText().toString().isEmpty()) {
             Snackbar.make(getView(), "Ingrese su identificación", Snackbar.LENGTH_SHORT).show();
+            etIdentification.setError("Ingrese su identificación");
             return false;
-        } else if (etEmail.getText().toString().equals("")) {
+        } else if (etEmail.getText().toString().isEmpty()) {
             Snackbar.make(getView(), "Ingrese su correo electrónico", Snackbar.LENGTH_SHORT).show();
+            etEmail.setError("Ingrese su correo electrónico");
             return false;
-        } else if (etPassword.getText().toString().equals("")) {
+        } else if (etPassword.getText().toString().isEmpty()) {
             Snackbar.make(getView(), "Ingrese su contraseña", Snackbar.LENGTH_SHORT).show();
+            etPassword.setError("Ingrese su contraseña");
             return false;
-        } else if (etPassword.getText().toString().equals("")) {
+        } else if (etPasswordRepeat.getText().toString().isEmpty()) {
             Snackbar.make(getView(), "Ingrese de nuevo su contraseña", Snackbar.LENGTH_SHORT).show();
+            etPasswordRepeat.setError("Ingrese de nuevo su contraseña");
             return false;
         } else if (!etPassword.getText().toString().equals(etPasswordRepeat.getText().toString())) {
             Snackbar.make(getView(), "Las contraseñas deben coincidir", Snackbar.LENGTH_SHORT).show();
             return false;
-        } else if (etAge.getText().toString().equals("")) {
+        } else if (etAge.getText().toString().isEmpty()) {
             Snackbar.make(getView(), "Ingrese su edad", Snackbar.LENGTH_SHORT).show();
+            etAge.setError("Ingrese su edad");
             return false;
         } /*else if (etCivilState.getText().toString().equals("")) {
             Snackbar.make(getView(), "Ingrese su estado civil", Snackbar.LENGTH_SHORT).show();
@@ -279,8 +276,9 @@ public class PatientFragment extends Fragment implements com.android.volley.Resp
         } /*else if (etOccupation.getText().toString().equals("")) {
             Snackbar.make(findViewById(R.id.container_register), "Ingrese su ocupación", Snackbar.LENGTH_SHORT).show();
             return false;
-        }*/ else if (etPhone.getText().toString().equals("")) {
+        }*/ else if (etPhone.getText().toString().isEmpty()) {
             Snackbar.make(getView(), "Ingrese su número telefónico", Snackbar.LENGTH_SHORT).show();
+            etPhone.setError("Ingrese su número telefónico");
             return false;
         } /*else if (typeUserMap.get(typeUserValue).equals("medic") && etProfessionalId.getText().toString().equals("")) {
             Snackbar.make(findViewById(R.id.container_register), "Debe ingresar su identificación profesional", Snackbar.LENGTH_SHORT).show();
@@ -302,14 +300,16 @@ public class PatientFragment extends Fragment implements com.android.volley.Resp
     @Override
     public void onErrorResponse(VolleyError error) {
         progressDialog.hide();
-        Toast.makeText(getContext(), "melo"+ error.toString(),Toast.LENGTH_SHORT).show();
-        Log.d("Hola",dataToRegister.toString()+error.toString());
+        Toast.makeText(getContext(), "No se pudo registrar "+ error.toString(),Toast.LENGTH_SHORT).show();
+        Log.d("NoRegister",dataToRegister.toString()+error.toString());
     }
 
     @Override
     public void onResponse(JSONObject response) {
-        Toast.makeText(getContext(), "melo",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Se ha registrado correctamente",Toast.LENGTH_SHORT).show();
         progressDialog.hide();
+        clearView();
+        goToLogin();
     }
 
     /*private void addItemsToSpinerTypeUser(){
@@ -332,5 +332,15 @@ public class PatientFragment extends Fragment implements com.android.volley.Resp
 
 
     }*/
+    private void clearView(){
+        etUserName.setText("");
+        etLastName.setText("");
+        etIdentification.setText("");
+        etPhone.setText("");
+        etAge.setText("");
+        etPasswordRepeat.setText("");
+        etPassword.setText("");
+        etEmail.setText("");
+    }
 
 }

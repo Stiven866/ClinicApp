@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ClinicApp</string>
+    <string name="MyAccunt">Mi cuenta</string>
 
     <!-- Login Strings -->
     <string name="login.username">Cédula del usuario</string>
@@ -9,6 +10,9 @@
     <string name="login_error_idUser">No ha ingresado su cedula</string>
     <string name="login_error_pass">No ha ingresado su contraseña</string>
     <string name="title_activity_menu_medic">MenuMedic</string>
+
+
+    <string name="url">http://192.168.1.73/dbClinicApp/</string>
 
 
     <!-- Register Strings -->
@@ -51,9 +55,30 @@
     <string name="title_activity_register_tabs">RegisterTabs</string>
     <string name="tab_text_1">Register</string>
     <string name="tab_text_2">Con correo</string>
+    <string name="tab_text_3">MIS DATOS</string>
+    <string name="tab_text_4">MI SALUD</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_registerctivity">Registerctivity</string>
     <string name="title_activity_register">Register</string>
     <string name="title_activity_prueba">Prueba</string>
+    <string name="title_activity_my_accunt">MyAccunt</string>
+    
+    
+    
+    <string-array name="account_paises">
+        <item>Colombia</item>
+        <item>Argentina</item>
+        <item>Peru</item>
+        <item>Brasil</item>
+        <item>Uruguay</item>
+        <item>Venezuela</item>
+    </string-array>
+
+    <string-array name="account_localidades">
+        <item>Antioquia</item>
+        <item>Cordoba</item>
+        <item>Guajira</item>
+        <item>Santander</item>
+    </string-array>
 
 </resources>

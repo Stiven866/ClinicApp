@@ -1,9 +1,11 @@
 package com.stivenduque.clinicapp;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
@@ -17,30 +19,36 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.util.Map;
 import android.support.design.widget.BottomNavigationView;
 
-import com.facebook.AccessToken;
-import com.facebook.login.LoginManager;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.stivenduque.clinicapp.entidades.User;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MenuProfile extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener, com.android.volley.Response.Listener<JSONObject>, com.android.volley.Response.ErrorListener {
     TextView tvDrawerUsername, tvDrawerEmail, tvTypeUser;
     BottomNavigationView bottomNavigationView;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
     private GoogleApiClient googleApiClient;
+    private String idPreferences;
+    SharedPreferences sharedPreferences;
+    ProgressDialog progressDialog;
+    RequestQueue request;
+    JsonObjectRequest jsonObjectRequest;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +69,7 @@ public class MenuProfile extends AppCompatActivity
                 Fragment fragment = null;
                 switch (item.getItemId()) {
                     case R.id.my_history:
-                        fragment = new BlankFragment();
+                        fragment = new BlankFragment4();
                         break;
                     case R.id.my_doctors:
                         fragment = new BlankFragment2();
@@ -77,6 +85,9 @@ public class MenuProfile extends AppCompatActivity
                 return true;
             }
         });
+
+        request = Volley.newRequestQueue(this);
+
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -122,8 +133,9 @@ public class MenuProfile extends AppCompatActivity
         Fragment fragment = null;
         switch (item.getItemId()){
             case R.id.nav_my_account:
-                fragment = new BlankFragment4();
-                break;
+                item.setChecked(false);
+                goToAccount();
+                return true;
             case R.id.nav_add_familiary:
                 fragment = new BlankFragment3();
                 break;
@@ -131,29 +143,29 @@ public class MenuProfile extends AppCompatActivity
                 fragment = new BlankFragment2();
                 break;
             case R.id.nav_change_language:
-                fragment = new BlankFragment();
+                //fragment = new MyAccountPatient();
                 break;
             case R.id.nav_close_session:
-                fragment = new BlankFragment();
+                //fragment = new MyAccountPatient();
                 logOut();
                 break;
             case R.id.nav_get_out:
-                fragment = new BlankFragment();
+                //fragment = new MyAccountPatient();
                 finish();
                 break;
         }
         replaceFragment(fragment);
         DrawerLayout drawer = findViewById(R.id.drawer_user_layout);
         drawer.closeDrawer(GravityCompat.START);
+
         return true;
     }
     @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    }
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {}
 
     private void setInitialFragment() {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.content, new BlankFragment());
+        fragmentTransaction.add(R.id.content, new BlankFragment4());
         fragmentTransaction.commit();
     }
 
@@ -163,8 +175,43 @@ public class MenuProfile extends AppCompatActivity
         fragmentTransaction.commit();
     }
 
+
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    public void logOut() {
+        /*firebaseAuth.signOut();
+        Auth.GoogleSignInApi.signOut(googleApiClient);
+        FirebaseAuth.getInstance().signOut();
+        LoginManager.getInstance().logOut();*/
+        loadPreferences();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("id", "0");
+        editor.commit();
+        goToLogin();
+    }
+
+    private void goToLogin() {
+        Intent intent = new Intent(MenuProfile.this,Login.class);
+        startActivity(intent);
+        finish();
+    }
+    private void goToAccount(){
+        Intent intent = new Intent(MenuProfile.this, MyAccount.class);
+        startActivityForResult(intent,0);
+        //finish();
+    }
+
+    private void loadPreferences(){
+       sharedPreferences = getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
+       idPreferences = sharedPreferences.getString("id","0");
+    }
+
     private void initDataBase() {
-        firebaseAuth = FirebaseAuth.getInstance();
+        /*firebaseAuth = FirebaseAuth.getInstance();
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -182,17 +229,55 @@ public class MenuProfile extends AppCompatActivity
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail().build();
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this,this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso ).build();
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso ).build();*/
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+        Toast.makeText(this, "No hay consulta "+ error.toString(),Toast.LENGTH_SHORT).show();
+        Log.d("NoExiste",error.toString());
+    }
+
+    @Override
+    public void onResponse(JSONObject response) {
+       User user = new User();
+        //Toast.makeText(this, "Message: "+ response,Toast.LENGTH_SHORT).show();
+        JSONArray jsonArray = response.optJSONArray("User");
+        JSONObject jsonObject = null;
+
+        try {
+            jsonObject = jsonArray.getJSONObject(0);
+            user.setName(jsonObject.optString("name"));
+            user.setLasName(jsonObject.optString("lastName"));
+            user.setEmail(jsonObject.optString("email"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        tvDrawerEmail.setText(user.getEmail());
+        tvDrawerUsername.setText(user.getName() + " "+ user.getLasName());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        firebaseAuth.addAuthStateListener(authStateListener);
+        /*firebaseAuth.addAuthStateListener(authStateListener);
 
         if (firebaseAuth.getInstance().getCurrentUser() != null){
             Log.d("User", "Usuario logueado");
+        }else {
+            logOut();
+            goToLogin();
+        }*/
+
+        loadPreferences();
+        if (idPreferences != "0"){
+            Log.d("User", "Usuario logueado");
+            String url = getResources().getString(R.string.url)+ "Consulta.php?id="+idPreferences;
+            Log.d("User", url);
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null, this, this);
+            request.add(jsonObjectRequest);
         }else {
             logOut();
             goToLogin();
@@ -202,30 +287,11 @@ public class MenuProfile extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        if (authStateListener != null){
+        /*if (authStateListener != null){
             firebaseAuth.removeAuthStateListener(authStateListener);
-        }
+        }*/
 
     }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    public void logOut() {
-        firebaseAuth.signOut();
-        Auth.GoogleSignInApi.signOut(googleApiClient);
-        FirebaseAuth.getInstance().signOut();
-        LoginManager.getInstance().logOut();
-    }
-
-    private void goToLogin() {
-        Intent intent = new Intent(MenuProfile.this,Login.class);
-        startActivity(intent);
-        finish();
-    }
-
 }
 
 

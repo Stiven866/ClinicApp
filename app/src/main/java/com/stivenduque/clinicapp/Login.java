@@ -1,6 +1,9 @@
 package com.stivenduque.clinicapp;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -28,6 +36,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Response;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -37,10 +46,17 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import java.util.Map;
+import java.util.concurrent.RejectedExecutionHandler;
+
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.stivenduque.clinicapp.entidades.User;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
-public class Login extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class Login extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, com.android.volley.Response.Listener<JSONObject>, com.android.volley.Response.ErrorListener {
     EditText etIdUser, etPass, etEmail;
     TextView tvGoToRegister;
     Button btnLogin;
@@ -54,6 +70,11 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
     private CallbackManager callbackManager;
     public static final int LOGIN_CON_GOOGLE = 777;
 
+    ProgressDialog progressDialog;
+    RequestQueue request;
+    JsonObjectRequest jsonObjectRequest;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +86,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
     }
 
     private void initDataBase() {
-        //Inicio con correo electronico
+       /* //Inicio con correo electronico
         mAuth = FirebaseAuth.getInstance();
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -88,26 +109,34 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
         mgoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API,gso)
-                .build();
+                .build();*/
     }
 
 
 
     public void loginUser(){
-        if (etEmail.getText().toString().isEmpty()){//*************************
-            etEmail.setError(getString(R.string.login_error_idUser));//*************************
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Cargando usuario...");
+        progressDialog.show();
+        if (etIdUser.getText().toString().isEmpty()){//*************************
+            etIdUser.setError(getString(R.string.login_error_idUser));//*************************
         }else if (etPass.getText().toString().isEmpty()) {
             etPass.setError(getString(R.string.login_error_pass));
         }
         else {
-            checkedUserSession(etEmail.getText().toString(),etPass.getText().toString());
+            String url =getResources().getString(R.string.url)+"Login.php?id="+etIdUser.getText().toString()+"&password="+etPass.getText().toString();
+            //Log.d("User", url);
+            url = url.replace(" ","%20");
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null, this, this);
+            request.add(jsonObjectRequest);
+            //checkedUserSession(etIdUser.getText().toString(),etPass.getText().toString());
         }
     }
 
 
 
     private void checkedUserSession(String email, String pass) {
-        mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(Login.this, new OnCompleteListener<AuthResult>() {
+        /*mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(Login.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
@@ -120,10 +149,10 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
                     Toast.makeText(getApplicationContext(),task.getException().getMessage(),Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        });*/
     }
 
-    @Override
+    /*@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode,resultCode,data);
@@ -133,17 +162,17 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
             handleSinginInResult(result);
         }
 
-    }
+    }*/
 
-    private void handleSinginInResult(GoogleSignInResult result) {
+    /*private void handleSinginInResult(GoogleSignInResult result) {
         if(result.isSuccess()){
             firebaseAuthWithGoogle(result.getSignInAccount());
         }else{
             Log.d("SESION WHIT GOOGLE", "No se pudo iniciar");
         }
-    }
+    }*/
 
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+   /* private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -168,7 +197,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 
                     }
                 });
-    }
+    }*/
 
 
 
@@ -178,24 +207,24 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
         finish();
     }
     private void initUi() {
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(this);
-        callbackManager = CallbackManager.Factory.create();
+        //FacebookSdk.sdkInitialize(getApplicationContext());
+        //AppEventsLogger.activateApp(this);
+        //callbackManager = CallbackManager.Factory.create();
 
-        //etIdUser = findViewById(R.id.et_login_idUser);//*************************
-        etEmail = findViewById(R.id.et_login_email);
+        etIdUser = findViewById(R.id.et_login_idUser);//*************************
+        //etEmail = findViewById(R.id.et_login_email);
         etPass = findViewById(R.id.et_login_pass);
         tvGoToRegister = findViewById(R.id.linkLoginToRegister);
-        //etIdUser.setHintTextColor(getResources().getColor(R.color.textApp));//*************************
+        etIdUser.setHintTextColor(getResources().getColor(R.color.textApp));//*************************
         etPass.setHintTextColor(getResources().getColor(R.color.textApp));
-        etEmail.setHintTextColor(getResources().getColor(R.color.textApp));
+        //etEmail.setHintTextColor(getResources().getColor(R.color.textApp));
         tvGoToRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 goToRegister();
             }
         });
-
+        request = Volley.newRequestQueue(this);
         btnLogin = findViewById(R.id.btn_login_deposit);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,7 +233,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
             }
         });
 
-        btnSignInGoogle = findViewById(R.id.login_button_google);
+       /* btnSignInGoogle = findViewById(R.id.login_button_google);
         btnSignInGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -230,9 +259,9 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
             public void onError(FacebookException error) {
                 Log.d("SESION WHIT FACEBOOK:", "Ha salido un error de inicio de sesion con facebook");
             }
-        });
+        });*/
     }
-    private  void handleFacebookAccessToken(AccessToken accessToken){
+    /*private  void handleFacebookAccessToken(AccessToken accessToken){
         AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
         mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -253,7 +282,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 
             }
         });
-    }
+    }*/
 
     private void goToRegister() {
         Intent intent = new Intent(Login.this, RegisterTabs.class);
@@ -264,15 +293,15 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
     @Override
     protected void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(authStateListener);
+        //mAuth.addAuthStateListener(authStateListener);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (authStateListener != null){
+        /*if (authStateListener != null){
             mAuth.removeAuthStateListener(authStateListener);
-        }
+        }*/
 
     }
 
@@ -280,4 +309,35 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+        progressDialog.hide();
+        Toast.makeText(this, "El usuario no existe "+ error.toString(),Toast.LENGTH_SHORT).show();
+        Log.d("NoExiste",error.toString());
+    }
+
+    @Override
+    public void onResponse(JSONObject response) {
+        User user = new User();
+        Toast.makeText(this, "Se ha registrado correctamente",Toast.LENGTH_SHORT).show();
+
+        JSONArray jsonArray = response.optJSONArray("User");
+        JSONObject jsonObject = null;
+
+        try {
+            jsonObject = jsonArray.getJSONObject(0);
+            user.setId(jsonObject.optString("id"));
+            SharedPreferences sharedPreferences = getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("id", user.getId());
+            editor.commit();
+            initApp();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        progressDialog.hide();
+    }
+
 }

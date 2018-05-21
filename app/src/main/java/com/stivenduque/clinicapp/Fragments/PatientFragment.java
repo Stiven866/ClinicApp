@@ -1,4 +1,4 @@
-package com.stivenduque.clinicapp;
+package com.stivenduque.clinicapp.Fragments;
 
 
 import android.app.ProgressDialog;
@@ -26,6 +26,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.api.Response;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.stivenduque.clinicapp.R;
 
 import org.json.JSONObject;
 

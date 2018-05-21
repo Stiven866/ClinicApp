@@ -1,4 +1,4 @@
-package com.stivenduque.clinicapp;
+package com.stivenduque.clinicapp.Fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -20,6 +20,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.stivenduque.clinicapp.R;
 import com.stivenduque.clinicapp.entidades.User;
 
 import org.json.JSONArray;
@@ -85,7 +86,8 @@ public class MyAccountPatient extends Fragment implements
 
     @Override
     public void onErrorResponse(VolleyError error) {
-
+        Toast.makeText(getContext(), "No hay consulta "+ error.toString(),Toast.LENGTH_SHORT).show();
+        Log.d("NoExiste",error.toString());
     }
 
     @Override

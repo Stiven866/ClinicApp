@@ -29,6 +29,9 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
+import com.stivenduque.clinicapp.Fragments.BlankFragment3;
+import com.stivenduque.clinicapp.Fragments.BlankFragment4;
+import com.stivenduque.clinicapp.Fragments.MyMedicsFragment;
 import com.stivenduque.clinicapp.entidades.User;
 
 import org.json.JSONArray;
@@ -72,7 +75,7 @@ public class MenuProfile extends AppCompatActivity
                         fragment = new BlankFragment4();
                         break;
                     case R.id.my_doctors:
-                        fragment = new BlankFragment2();
+                        fragment = new MyMedicsFragment();
                         break;
                     case R.id.pharmacies:
                         fragment = new BlankFragment3();
@@ -140,19 +143,18 @@ public class MenuProfile extends AppCompatActivity
                 fragment = new BlankFragment3();
                 break;
             case R.id.nav_change_pass:
-                fragment = new BlankFragment2();
+                fragment = new MyMedicsFragment();
                 break;
             case R.id.nav_change_language:
                 //fragment = new MyAccountPatient();
                 break;
             case R.id.nav_close_session:
-                //fragment = new MyAccountPatient();
                 logOut();
-                break;
+                return true;
             case R.id.nav_get_out:
                 //fragment = new MyAccountPatient();
                 finish();
-                break;
+                return true;
         }
         replaceFragment(fragment);
         DrawerLayout drawer = findViewById(R.id.drawer_user_layout);

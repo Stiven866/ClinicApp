@@ -13,7 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -21,7 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.stivenduque.clinicapp.R;
-import com.stivenduque.clinicapp.entidades.User;
+import com.stivenduque.clinicapp.Entidades.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;

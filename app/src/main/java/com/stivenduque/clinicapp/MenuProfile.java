@@ -32,7 +32,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.stivenduque.clinicapp.Fragments.BlankFragment3;
 import com.stivenduque.clinicapp.Fragments.BlankFragment4;
 import com.stivenduque.clinicapp.Fragments.MyMedicsFragment;
-import com.stivenduque.clinicapp.entidades.User;
+import com.stivenduque.clinicapp.Entidades.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;

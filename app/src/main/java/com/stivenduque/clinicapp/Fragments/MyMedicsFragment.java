@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -39,14 +40,16 @@ public class MyMedicsFragment extends Fragment implements  com.android.volley.Re
     private String idPreferences;
     SharedPreferences sharedPreferences;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.my_medics_fragment, container, false);
         userArrayList = new ArrayList<>();
+        LinearLayoutManager manager = new LinearLayoutManager(getContext());
         recyclerViewUser = view.findViewById(R.id.rv_my_medics);
-        recyclerViewUser.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        recyclerViewUser.setLayoutManager(manager);
         recyclerViewUser.setHasFixedSize(true);
 
         request = Volley.newRequestQueue(getContext());
@@ -64,7 +67,7 @@ public class MyMedicsFragment extends Fragment implements  com.android.volley.Re
         String url =  getResources().getString(R.string.url)+ "Consulta_medics.php?user_id="+idPreferences;
         Log.d("UURRLL",url);
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null, this, this);
-        request.add(jsonObjectRequest);;
+        request.add(jsonObjectRequest);
      }
     private void loadPreferences(){
         sharedPreferences = this.getActivity().getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
@@ -75,6 +78,7 @@ public class MyMedicsFragment extends Fragment implements  com.android.volley.Re
     public void onErrorResponse(VolleyError error) {
         Toast.makeText(getContext(), "No hay consulta "+ error.toString(),Toast.LENGTH_SHORT).show();
         Log.d("NoExiste",error.toString());
+        progressDialog.hide();
     }
 
     @Override
@@ -89,6 +93,7 @@ public class MyMedicsFragment extends Fragment implements  com.android.volley.Re
                 user.setId(jsonObject.optString("id"));
                 user.setName(jsonObject.optString("name"));
                 user.setPhone(jsonObject.optString("phone"));
+                Log.d("2333", user.getName());
                 userArrayList.add(user);
                 }
                 progressDialog.hide();

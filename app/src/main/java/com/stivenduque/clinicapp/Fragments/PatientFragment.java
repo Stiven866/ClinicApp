@@ -26,6 +26,9 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.api.Response;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.stivenduque.clinicapp.Entidades.User;
 import com.stivenduque.clinicapp.R;
 
 import org.json.JSONObject;
@@ -49,6 +52,8 @@ public class PatientFragment extends Fragment implements com.android.volley.Resp
     ProgressDialog progressDialog;
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
+    private DatabaseReference referenceUser;
+    private FirebaseDatabase database;
     //private FirebaseAuth firebaseAuth;
     //private FirebaseAuth.AuthStateListener authStateListener;
     public PatientFragment() {
@@ -107,6 +112,9 @@ public class PatientFragment extends Fragment implements com.android.volley.Resp
 
 
         request = Volley.newRequestQueue(getContext());
+        database = FirebaseDatabase.getInstance();
+
+        referenceUser = database.getReference("User");
     }
 
 
@@ -308,6 +316,10 @@ public class PatientFragment extends Fragment implements com.android.volley.Resp
     @Override
     public void onResponse(JSONObject response) {
         Toast.makeText(getContext(), "Se ha registrado correctamente",Toast.LENGTH_SHORT).show();
+        User usuario = new User();
+        usuario.setName(etUserName.getText().toString());
+        usuario.setEmail(etEmail.getText().toString());
+        referenceUser.push().setValue(usuario);
         progressDialog.hide();
         clearView();
         goToLogin();

@@ -12,7 +12,7 @@
     <string name="title_activity_menu_medic">MenuMedic</string>
 
 
-    <string name="url">http://192.168.1.73/dbClinicApp/</string>
+    <string name="url">http://192.168.1.5/dbClinicApp/</string>
 
 
     <!-- Register Strings -->
@@ -62,9 +62,8 @@
     <string name="title_activity_register">Register</string>
     <string name="title_activity_prueba">Prueba</string>
     <string name="title_activity_my_accunt">MyAccunt</string>
-    
-    
-    
+
+
     <string-array name="account_paises">
         <item>Colombia</item>
         <item>Argentina</item>

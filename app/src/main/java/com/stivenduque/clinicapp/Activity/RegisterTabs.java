@@ -1,6 +1,5 @@
-package com.stivenduque.clinicapp;
+package com.stivenduque.clinicapp.Activity;
 
-import android.content.SharedPreferences;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -11,87 +10,56 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.TextView;
 
-import com.stivenduque.clinicapp.Fragments.BlankFragment4;
-import com.stivenduque.clinicapp.Fragments.MyAccountPatient;
+import com.stivenduque.clinicapp.Fragments.Articulos;
+import com.stivenduque.clinicapp.Fragments.PatientFragment;
+import com.stivenduque.clinicapp.R;
 
-public class MyAccount extends AppCompatActivity  {
+public class RegisterTabs extends AppCompatActivity {
 
-    SharedPreferences sharedPreferences;
-    private String idPreferences;
     private SectionsPagerAdapter mSectionsPagerAdapter;
+
     private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_account);
+        setContentView(R.layout.activity_register_tabs);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
         mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-
-
         TabLayout tabLayout = findViewById(R.id.tabs);
+
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
-    }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.menu_my_accunt, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
-        if (id == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
         public PlaceholderFragment() {
         }
 
-
         public static Fragment newInstance(int sectionNumber) {
             Fragment fragment = null;
             switch (sectionNumber){
                 case 1:
-                    fragment = new MyAccountPatient();
+                    fragment = new PatientFragment();
                     break;
                 case 2:
-                    fragment = new BlankFragment4();
+                    fragment = new Articulos();
                     break;
-
             }
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
@@ -102,7 +70,7 @@ public class MyAccount extends AppCompatActivity  {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_my_account, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_register_tabs, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
@@ -117,8 +85,6 @@ public class MyAccount extends AppCompatActivity  {
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
             return PlaceholderFragment.newInstance(position + 1);
         }
 
@@ -129,19 +95,5 @@ public class MyAccount extends AppCompatActivity  {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
 
 }

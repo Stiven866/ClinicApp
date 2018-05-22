@@ -16,11 +16,11 @@
             android:value="@string/facebook_app_id" />
 
         <activity
-            android:name=".MenuProfile"
+            android:name=".Activity.MenuProfile"
             android:label="@string/title_activity_menu_profile" />
-        <activity android:name=".Login" />
+        <activity android:name=".Activity.Login" />
         <activity
-            android:name=".SplashScreen"
+            android:name=".Activity.SplashScreen"
             android:theme="@style/Theme.Transparent">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,13 +29,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".RegisterTabs"
+            android:name=".Activity.RegisterTabs"
             android:label="@string/title_activity_register_tabs"
             android:theme="@style/AppTheme2" />
         <activity
-            android:name=".MyAccount"
+            android:name=".Activity.MyAccount"
             android:label="@string/title_activity_my_accunt"
-            android:theme="@style/AppTheme2"></activity>
+            android:theme="@style/AppTheme2" />
+        <activity android:name=".Activity.ChatActivity"></activity>
     </application>
 
 </manifest>

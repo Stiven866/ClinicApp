@@ -1,4 +1,4 @@
-package com.stivenduque.clinicapp;
+package com.stivenduque.clinicapp.Fragments;
 
 
 import android.app.ProgressDialog;
@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.stivenduque.clinicapp.R;
 
 import static android.app.Activity.RESULT_OK;
 

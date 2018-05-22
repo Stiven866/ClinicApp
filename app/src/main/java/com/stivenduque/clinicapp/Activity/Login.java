@@ -1,4 +1,4 @@
-package com.stivenduque.clinicapp;
+package com.stivenduque.clinicapp.Activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -30,6 +30,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.Map;
 
 import com.stivenduque.clinicapp.Entidades.User;
+import com.stivenduque.clinicapp.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;

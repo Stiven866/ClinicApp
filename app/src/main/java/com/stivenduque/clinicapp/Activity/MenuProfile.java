@@ -1,4 +1,4 @@
-package com.stivenduque.clinicapp;
+package com.stivenduque.clinicapp.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -33,6 +33,7 @@ import com.stivenduque.clinicapp.Fragments.BlankFragment3;
 import com.stivenduque.clinicapp.Fragments.BlankFragment4;
 import com.stivenduque.clinicapp.Fragments.MyMedicsFragment;
 import com.stivenduque.clinicapp.Entidades.User;
+import com.stivenduque.clinicapp.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -78,7 +79,7 @@ public class MenuProfile extends AppCompatActivity
                         fragment = new MyMedicsFragment();
                         break;
                     case R.id.pharmacies:
-                        fragment = new BlankFragment3();
+
                         break;
                     case R.id.medic_center:
                         fragment = new BlankFragment4();
@@ -147,7 +148,8 @@ public class MenuProfile extends AppCompatActivity
                 break;
             case R.id.nav_change_language:
                 //fragment = new MyAccountPatient();
-                break;
+                goToChat();
+                return true;
             case R.id.nav_close_session:
                 logOut();
                 return true;
@@ -162,6 +164,9 @@ public class MenuProfile extends AppCompatActivity
 
         return true;
     }
+
+
+
     @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {}
 
@@ -205,6 +210,10 @@ public class MenuProfile extends AppCompatActivity
         Intent intent = new Intent(MenuProfile.this, MyAccount.class);
         startActivityForResult(intent,0);
         //finish();
+    }
+    private void goToChat() {
+        Intent intent = new Intent(MenuProfile.this, ChatActivity.class);
+        startActivityForResult(intent,0);
     }
 
     private void loadPreferences(){

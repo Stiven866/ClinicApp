@@ -9,8 +9,9 @@ import android.widget.TextView;
 import com.stivenduque.clinicapp.Entidades.User;
 import com.stivenduque.clinicapp.R;
 
-
+import java.util.ArrayList;
 import java.util.List;
+
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder>{
 
@@ -18,6 +19,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder>{
     public UserAdapter(List<User> userList){
         this.userList = userList;
     }
+
 
 
     @Override
@@ -31,15 +33,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder>{
     @Override
     public void onBindViewHolder(UserHolder holder, int position) {
 
-        holder.tvName.setText(userList.get(position).getPhone());
-        holder.tvPhone.setText(userList.get(position).getPhone());
-        holder.tvDocument.setText(userList.get(position).getId());
+        holder.tvName.setText(userList.get(position).getName().toString());
+        holder.tvPhone.setText(userList.get(position).getPhone().toString());
+        holder.tvDocument.setText(userList.get(position).getId().toString());
 
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return userList.size();
     }
 
     public class UserHolder extends RecyclerView.ViewHolder{

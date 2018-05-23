@@ -12,7 +12,7 @@
     <string name="title_activity_menu_medic">MenuMedic</string>
 
 
-    <string name="url">http://192.168.1.5/dbClinicApp/</string>
+    <string name="url">https://sduque866.000webhostapp.com/</string>
 
 
     <!-- Register Strings -->
@@ -79,5 +79,6 @@
         <item>Guajira</item>
         <item>Santander</item>
     </string-array>
+    <string name="title_activity_maps_famacias">Map</string>
 
 </resources>

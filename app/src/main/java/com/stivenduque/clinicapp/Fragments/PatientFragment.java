@@ -1,6 +1,7 @@
 package com.stivenduque.clinicapp.Fragments;
 
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,24 +25,30 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.api.Response;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.stivenduque.clinicapp.Activity.RegisterTabs;
 import com.stivenduque.clinicapp.Entidades.User;
+import com.stivenduque.clinicapp.Entidades.Usuario;
 import com.stivenduque.clinicapp.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import static android.app.Activity.RESULT_OK;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class PatientFragment extends Fragment implements com.android.volley.Response.Listener<JSONObject>, com.android.volley.Response.ErrorListener {
     EditText etUserName, etLastName, etEmail, etIdentification, etPassword, etPasswordRepeat, etAge, etCivilState, etPhone;
     TextView tvGgoToLogin;
@@ -49,13 +56,15 @@ public class PatientFragment extends Fragment implements com.android.volley.Resp
     String typeUserValue, sex;
     RadioButton rbtnMale, rbtnFamale;
     Map<String, String> dataToRegister;
-    ProgressDialog progressDialog;
+    User user = new User();
+    //ProgressDialog progressDialog;
+    boolean flagPrueba = false;
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
-    private DatabaseReference referenceUser;
     private FirebaseDatabase database;
-    //private FirebaseAuth firebaseAuth;
-    //private FirebaseAuth.AuthStateListener authStateListener;
+    //private DatabaseReference referenceUser;
+    private FirebaseAuth mAuth;
+    Activity activity;
     public PatientFragment() {
         // Required empty public constructor
     }
@@ -64,34 +73,13 @@ public class PatientFragment extends Fragment implements com.android.volley.Resp
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_patient, container, false);
-        //initDataBase();
+        activity = getActivity();
         initUi(view);
         initActions();
-        //addItemsToSpinerTypeUser();
-        //addItemsToSpinnerMedicReviewer();
-
-
         return view;
     }
 
-
-    /*private void initDataBase() {
-        firebaseAuth = FirebaseAuth.getInstance();
-        authStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-                if(firebaseUser != null ){
-                    Log.d("FirebaseUser", "Usuario logeado :)  : "+ firebaseUser.getEmail());
-                }else {
-                    Log.d("FirebaseUser", "No hay usuario logeado :(");
-                }
-
-            }
-        };
-    }*/
 
 
     private void initUi(View view) {
@@ -106,15 +94,12 @@ public class PatientFragment extends Fragment implements com.android.volley.Resp
         etPhone = view.findViewById(R.id.et_register_phone);
         rbtnFamale = view.findViewById(R.id.rbFamale);
         rbtnMale = view.findViewById(R.id.rbMale);
-
         tvGgoToLogin = view.findViewById(R.id.txv_goto_login);
         btnRegister = view.findViewById(R.id.btn_register);
-
-
-        request = Volley.newRequestQueue(getContext());
         database = FirebaseDatabase.getInstance();
-
-        referenceUser = database.getReference("User");
+        //referenceUser = database.getReference("User");
+        mAuth = FirebaseAuth.getInstance();
+        request = Volley.newRequestQueue(getContext());
     }
 
 
@@ -125,89 +110,38 @@ public class PatientFragment extends Fragment implements com.android.volley.Resp
                 goToLogin();
             }
         });
-
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 registerUser();
+
             }
+
         });
-
-        /*spTypeUser.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                typeUserValue = spTypeUser.getSelectedItem().toString();
-                if (typeUserMap.get(typeUserValue).equals("medic")) {
-                    etProfessionalId.setVisibility(View.VISIBLE);
-                    spListMedicalCenters.setVisibility(View.VISIBLE);
-                } else {
-                    etProfessionalId.setVisibility(View.GONE);
-                    spListMedicalCenters.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });*/
-
-        /*spListMedicalCenters.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                centerSelectedIndex = i;
-                Log.d("JAHJAGSDASD:", String.valueOf(centerSelectedIndex));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });*/
-
     }
 
     private void registerUser() {
         sexUser();
         if (validateRegister()) {
-            dataToRegister = new HashMap<>();
-            dataToRegister.put("userName", etUserName.getText().toString());
-            dataToRegister.put("lastName", etLastName.getText().toString());
-            //dataToRegister.put("typeUser", typeUserMap.get(typeUserValue));
-            dataToRegister.put("identification", etIdentification.getText().toString());
-            dataToRegister.put("email", etEmail.getText().toString());
-            dataToRegister.put("password", etPassword.getText().toString());
-            dataToRegister.put("age", etAge.getText().toString());
-            //dataToRegister.put("civilState", etCivilState.getText().toString());
-            dataToRegister.put("sex", sex);
-            //dataToRegister.put("occupation", etOccupation.getText().toString());
-            dataToRegister.put("phone", etPhone.getText().toString());
-            //dataToRegister.put("professionalId", etProfessionalId.getText().toString());
-            //dataToRegister.put("center", centersMap.get(String.valueOf(centerSelectedIndex)));
-            Log.d("REGISTERING", dataToRegister.toString());
-            //createAccount(dataToRegister);
-            //Snackbar.make(findViewById(R.id.container_register), "Registro exitoso", Snackbar.LENGTH_SHORT).show();
+            user.setName(etUserName.getText().toString());
+            user.setLasName(etLastName.getText().toString());
+            user.setId(etIdentification.getText().toString());
+            user.setEmail(etEmail.getText().toString());
+            user.setPsw(etPassword.getText().toString());
+            user.setAge(etAge.getText().toString());
+            user.setSex(sex);
+            user.setPhone(etPhone.getText().toString());
+            if (initDataBase()){
+                goToLogin();
+            }else {
+                //Toast.makeText(activity,"Algo raro pasa",Toast.LENGTH_SHORT).show();
+            }
 
-            makeRequest();
-            goToLogin();
         } else {
 
         }
     }
 
-    /*private void createAccount(Map<String,String> Map) {
-        firebaseAuth.createUserWithEmailAndPassword(Map.get("email"), Map.get("password")).
-                addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
-                            Snackbar.make(getView(), "Registro exitoso", Snackbar.LENGTH_SHORT).show();
-                        }else {
-                            Snackbar.make(getView(), "Registro no valido", Snackbar.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }*/
     private void sexUser() {
         if (rbtnFamale.isChecked()) {
             sex = "Mujer";
@@ -215,31 +149,17 @@ public class PatientFragment extends Fragment implements com.android.volley.Resp
             sex = "Hombre";
         }
     }
-    private void makeRequest() {
 
-        loadWebService();
-
-        try {
-
-            //Intent intent = new Intent();
-            //intent.putExtra("dataToRegister", (Serializable) dataToRegister);
-            //setResult(RESULT_OK, intent);
-        } catch (Exception error) {
-            Log.d("onError", error.getMessage());
-        }
-
-    }
 
     private void loadWebService() {
-        progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("Cargando...");
-        progressDialog.show();
-        String url = getResources().getString(R.string.url)+"Register.php?name="+dataToRegister.get("userName").toString()+
-                "&lastName="+dataToRegister.get("lastName").toString()+"&id="+dataToRegister.get("identification").toString()+
-                "&email="+dataToRegister.get("email").toString()+"&password="+dataToRegister.get("password").toString()+
-                "&age="+dataToRegister.get("age").toString()+"&sex="+dataToRegister.get("sex").toString()+"&phone="+dataToRegister.get("phone").toString();
-        url = url.replace(" ","%20");
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null, this, this);
+        //progressDialog = new ProgressDialog(getContext());
+        //progressDialog.setMessage("Cargando...");
+        //progressDialog.show();
+        String url = getResources().getString(R.string.url) + "Register.php?name=" + user.getName()+"&lastName="+user.getLasName()+
+                "&id=" + user.getId()+"&email="+user.getEmail()+"&password="+user.getPsw()+"&age="+user.getAge()+"&sex="+user.getSex()+
+                "&phone=" + user.getPhone();
+        url = url.replace(" ", "%20");
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
         request.add(jsonObjectRequest);
 
     }
@@ -272,88 +192,115 @@ public class PatientFragment extends Fragment implements com.android.volley.Resp
         } else if (!etPassword.getText().toString().equals(etPasswordRepeat.getText().toString())) {
             Snackbar.make(getView(), "Las contraseñas deben coincidir", Snackbar.LENGTH_SHORT).show();
             return false;
-        } else if (etAge.getText().toString().isEmpty()) {
-            Snackbar.make(getView(), "Ingrese su edad", Snackbar.LENGTH_SHORT).show();
-            etAge.setError("Ingrese su edad");
-            return false;
-        } /*else if (etCivilState.getText().toString().equals("")) {
-            Snackbar.make(getView(), "Ingrese su estado civil", Snackbar.LENGTH_SHORT).show();
-            return false;
-        }*/ else if (!rbtnMale.isChecked() && !rbtnFamale.isChecked()) {
-            Snackbar.make(getView(), "Ingrese su sexo", Snackbar.LENGTH_SHORT).show();
-            return false;
-        } /*else if (etOccupation.getText().toString().equals("")) {
-            Snackbar.make(findViewById(R.id.container_register), "Ingrese su ocupación", Snackbar.LENGTH_SHORT).show();
-            return false;
-        }*/ else if (etPhone.getText().toString().isEmpty()) {
-            Snackbar.make(getView(), "Ingrese su número telefónico", Snackbar.LENGTH_SHORT).show();
-            etPhone.setError("Ingrese su número telefónico");
-            return false;
-        } /*else if (typeUserMap.get(typeUserValue).equals("medic") && etProfessionalId.getText().toString().equals("")) {
-            Snackbar.make(findViewById(R.id.container_register), "Debe ingresar su identificación profesional", Snackbar.LENGTH_SHORT).show();
-            return false;
-        } else if (typeUserMap.get(typeUserValue).equals("medic") && centerSelectedIndex < 0) {
-            Snackbar.make(findViewById(R.id.container_register), "Debe ingresar el centro médico al que pertenece", Snackbar.LENGTH_SHORT).show();
-            return false;
-        }*/ else {
+        } else if (etPassword.getText().toString().equals(etPasswordRepeat.getText().toString())) {
+            if (etPassword.getText().toString().length() >= 6 && etPassword.getText().toString().length() <= 16) {
+                if (etAge.getText().toString().isEmpty()) {
+                    Snackbar.make(getView(), "Ingrese su edad", Snackbar.LENGTH_SHORT).show();
+                    etAge.setError("Ingrese su edad");
+                    return false;
+                } else if (!rbtnMale.isChecked() && !rbtnFamale.isChecked()) {
+                    Snackbar.make(getView(), "Ingrese su sexo", Snackbar.LENGTH_SHORT).show();
+                    return false;
+                } else if (etPhone.getText().toString().isEmpty()) {
+                    Snackbar.make(getView(), "Ingrese su número telefónico", Snackbar.LENGTH_SHORT).show();
+                    etPhone.setError("Ingrese su número telefónico");
+                    return false;
+                }else {
+                    return true;
+                }
+            } else {
+                Snackbar.make(getView(), "La contraseña debe tener minimo 6 y maximo 16 caracteres", Snackbar.LENGTH_SHORT).show();
+                return false;
+            }
+        } else {
             return true;
         }
     }
+
     private void goToLogin(){
         Intent intent = new Intent();
-        getActivity().setResult(RESULT_OK,intent);
-        getActivity().finish();
-        //finish();
+        activity.setResult(RESULT_OK,intent);
+        activity.finish();
     }
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        progressDialog.hide();
-        Toast.makeText(getContext(), "No se pudo registrar "+ error.toString(),Toast.LENGTH_SHORT).show();
-        Log.d("NoRegister",dataToRegister.toString()+error.toString());
+        Toast.makeText(activity, "No se pudo registrar "+ error.toString(),Toast.LENGTH_SHORT).show();
+        //Log.d("NoRegister",dataToRegister.toString()+"\n"+error.toString());
     }
 
     @Override
     public void onResponse(JSONObject response) {
-        Toast.makeText(getContext(), "Se ha registrado correctamente",Toast.LENGTH_SHORT).show();
-        User usuario = new User();
-        usuario.setName(etUserName.getText().toString());
-        usuario.setEmail(etEmail.getText().toString());
-        referenceUser.push().setValue(usuario);
-        progressDialog.hide();
-        clearView();
-        goToLogin();
+        JSONArray jsonArray = response.optJSONArray("User");
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = jsonArray.getJSONObject(0);
+            if (jsonObject.optString("success").equals("true") && jsonObject.optString("message").equals("registered")){
+                //Snackbar.make(getView(), "El usuario ha sido registrado existosamente", Snackbar.LENGTH_SHORT).show();
+                Toast.makeText(activity,"El usuario ha sido registrado existosamente",Toast.LENGTH_SHORT).show();
+                Log.d("RegisterSQL","El usuario ha sido registrado existosamente");
+                //initDataBase();
+                goToLogin();
+
+            }else if (jsonObject.optString("success").equals("false")&& jsonObject.optString("message").equals("existent")){
+                //Snackbar.make(getView(), "El usuario ya existe con este numero de cedula", Snackbar.LENGTH_SHORT).show();
+                Toast.makeText(activity,"El usuario ya existe con este numero de cedula", Toast.LENGTH_SHORT).show();
+                Log.d("RegisterSQL","El usuario ya existe con este numero de cedula");
+                goToLogin();
+            }
+            else if (jsonObject.optString("success").equals("false") && jsonObject.optString("message").equals("fail")) {
+                //Snackbar.make(getView(), "Fallo la comunicacion", Snackbar.LENGTH_SHORT).show();
+                Toast.makeText(activity, "Fallo la comunicacion", Toast.LENGTH_SHORT).show();
+                Log.d("RegisterSQL","Fallo la comunicacion");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
-    /*private void addItemsToSpinerTypeUser(){
-        List<String> listTypeUser = new ArrayList<String>();
-        listTypeUser.add("Paciente");
-        listTypeUser.add("Médico");
-
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(Register.this,R.layout.support_simple_spinner_dropdown_item, listTypeUser);
-        dataAdapter.setDropDownViewResource(android.R.layout.select_dialog_item);
-        spTypeUser.setAdapter(dataAdapter);
-    }
-    private void addItemsToSpinnerMedicReviewer(){
-        List<String>  localListCenters = new ArrayList<String>();
-        localListCenters.add("SURA EPS");
-        localListCenters.add("COMEVA");
-        localListCenters.add("CAFÉ SALUD");
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(Register.this,R.layout.support_simple_spinner_dropdown_item,localListCenters);
-        dataAdapter.setDropDownViewResource(android.R.layout.select_dialog_item);
-        spListMedicalCenters.setAdapter(dataAdapter);
-
-
-    }*/
-    private void clearView(){
-        etUserName.setText("");
-        etLastName.setText("");
-        etIdentification.setText("");
-        etPhone.setText("");
-        etAge.setText("");
-        etPasswordRepeat.setText("");
-        etPassword.setText("");
-        etEmail.setText("");
+    private boolean initDataBase() {
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(user.getEmail(),user.getPsw())
+                .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                Log.d("RegisterFIREBASE ",String.valueOf(task.isSuccessful()));
+                flagPrueba = false;
+                if (task.isSuccessful()){
+                    Log.d("RegisterFIREBASE ",String.valueOf(task.isSuccessful()));
+                    Usuario usuario = new Usuario();
+                    usuario.setName(user.getName());
+                    usuario.setEmail(user.getEmail());
+                    FirebaseUser currentUser = mAuth.getCurrentUser();
+                    DatabaseReference reference = database.getReference("User/"+currentUser.getUid());
+                    reference.setValue(usuario);
+                    FirebaseAuth.getInstance().signOut();
+                    //Toast.makeText(activity,"El usuario ha sido registrado existosamente",Toast.LENGTH_SHORT).show();
+                    loadWebService();
+                     flagPrueba = true;
+                    //goToLogin();
+                }else{
+                    Log.d("SESION","Error en la cuenta");
+                    flagPrueba = false;
+                }
+            }
+        });
+        return flagPrueba;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        FirebaseAuth.getInstance().signOut();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+    }
 }

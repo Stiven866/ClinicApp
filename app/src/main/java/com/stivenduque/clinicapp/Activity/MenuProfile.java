@@ -3,6 +3,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -29,6 +30,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.stivenduque.clinicapp.Fragments.BlankFragment3;
 import com.stivenduque.clinicapp.Fragments.BlankFragment4;
 import com.stivenduque.clinicapp.Fragments.MyMedicsFragment;
@@ -46,7 +48,7 @@ public class MenuProfile extends AppCompatActivity
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
     private GoogleApiClient googleApiClient;
-    private String idPreferences;
+    private String idPreferences = null;
     SharedPreferences sharedPreferences;
     ProgressDialog progressDialog;
     RequestQueue request;
@@ -73,16 +75,16 @@ public class MenuProfile extends AppCompatActivity
                 Fragment fragment = null;
                 switch (item.getItemId()) {
                     case R.id.my_history:
-                        fragment = new BlankFragment4();
+                        fragment = new  BlankFragment4();
                         break;
                     case R.id.my_doctors:
                         fragment = new MyMedicsFragment();
                         break;
                     case R.id.pharmacies:
-
+                        fragment = new  BlankFragment4();
                         break;
                     case R.id.medic_center:
-                        fragment = new BlankFragment4();
+                        fragment = new BlankFragment3();
                         break;
                 }
                 replaceFragment(fragment);
@@ -94,12 +96,14 @@ public class MenuProfile extends AppCompatActivity
 
 
         NavigationView navigationView = findViewById(R.id.nav_view);
+
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
         tvDrawerUsername = headerView.findViewById(R.id.tv_drawer_user_name);
         tvDrawerEmail = headerView.findViewById(R.id.tv_drawer_user_email);
 
     }
+
 
     @Override
     public void onBackPressed() {
@@ -135,26 +139,27 @@ public class MenuProfile extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         Fragment fragment = null;
+        Log.d("abierto", "no");
         switch (item.getItemId()){
             case R.id.nav_my_account:
-                item.setChecked(false);
+                Log.d("abierto", "yes");
+                closeDrawer(item);
                 goToAccount();
                 return true;
             case R.id.nav_add_familiary:
                 fragment = new BlankFragment3();
                 break;
             case R.id.nav_change_pass:
-                fragment = new MyMedicsFragment();
+                fragment = new BlankFragment4();
                 break;
             case R.id.nav_change_language:
-                //fragment = new MyAccountPatient();
                 goToChat();
+                item.setChecked(false);
                 return true;
             case R.id.nav_close_session:
                 logOut();
                 return true;
             case R.id.nav_get_out:
-                //fragment = new MyAccountPatient();
                 finish();
                 return true;
         }
@@ -165,6 +170,11 @@ public class MenuProfile extends AppCompatActivity
         return true;
     }
 
+    private void closeDrawer(MenuItem menuItem) {
+        DrawerLayout drawer = findViewById(R.id.drawer_user_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        menuItem.setChecked(false);
+    }
 
 
     @Override
@@ -182,65 +192,9 @@ public class MenuProfile extends AppCompatActivity
         fragmentTransaction.commit();
     }
 
-
-
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-    }
-
-    public void logOut() {
-        /*firebaseAuth.signOut();
-        Auth.GoogleSignInApi.signOut(googleApiClient);
-        FirebaseAuth.getInstance().signOut();
-        LoginManager.getInstance().logOut();*/
-        loadPreferences();
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("id", "0");
-        editor.commit();
-        goToLogin();
-    }
-
-    private void goToLogin() {
-        Intent intent = new Intent(MenuProfile.this,Login.class);
-        startActivity(intent);
-        finish();
-    }
-    private void goToAccount(){
-        Intent intent = new Intent(MenuProfile.this, MyAccount.class);
-        startActivityForResult(intent,0);
-        //finish();
-    }
-    private void goToChat() {
-        Intent intent = new Intent(MenuProfile.this, ChatActivity.class);
-        startActivityForResult(intent,0);
-    }
-
-    private void loadPreferences(){
-       sharedPreferences = getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
-       idPreferences = sharedPreferences.getString("id","0");
-    }
-
-    private void initDataBase() {
-        /*firebaseAuth = FirebaseAuth.getInstance();
-        authStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if(user!=null){
-                    Log.d("SESION", "sesion iniciada con email: "+ user.getEmail());
-                }else{
-                    Log.d("SESION", "sesion cerrada");
-                    goToLogin();
-                }
-            }
-        };
-        //Inicio con cuenta de Google
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail().build();
-        googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this,this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso ).build();*/
     }
 
     @Override
@@ -272,36 +226,71 @@ public class MenuProfile extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-
-        /*firebaseAuth.addAuthStateListener(authStateListener);
-
-        if (firebaseAuth.getInstance().getCurrentUser() != null){
-            Log.d("User", "Usuario logueado");
-        }else {
+        loadPreferences();
+        if (idPreferences == null){
+            //Log.d("User", idPreferences);
             logOut();
             goToLogin();
-        }*/
-
-        loadPreferences();
-        if (idPreferences != "0"){
+        }else {
             Log.d("User", "Usuario logueado");
             String url = getResources().getString(R.string.url)+ "Consulta.php?id="+idPreferences;
             Log.d("User", url);
             jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null, this, this);
             request.add(jsonObjectRequest);
-        }else {
-            logOut();
-            goToLogin();
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        /*if (authStateListener != null){
-            firebaseAuth.removeAuthStateListener(authStateListener);
-        }*/
+        //FirebaseAuth.getInstance().signOut();
 
+    }
+
+    private void loadPreferences(){
+        sharedPreferences = getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
+        idPreferences = sharedPreferences.getString("id",null);
+    }
+    private void initDataBase() {
+        /*firebaseAuth = FirebaseAuth.getInstance();
+        authStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if(user!=null){
+                    Log.d("SESION", "sesion iniciada con email: "+ user.getEmail());
+                }else{
+                    Log.d("SESION", "sesion cerrada");
+                    goToLogin();
+                }
+            }
+        };
+        //Inicio con cuenta de Google
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail().build();
+        googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this,this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso ).build();*/
+    }
+    public void logOut() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("id", null);
+        editor.commit();
+        goToLogin();
+    }
+    private void goToLogin() {
+        Intent intent = new Intent(MenuProfile.this,Login.class);
+        startActivity(intent);
+        finish();
+    }
+    private void goToAccount(){
+        Intent intent = new Intent(MenuProfile.this, MyAccount.class);
+        startActivityForResult(intent,0);
+        //finish();
+    }
+    private void goToChat() {
+        Intent intent = new Intent(MenuProfile.this, ChatActivity.class);
+        startActivityForResult(intent,0);
     }
 }
 

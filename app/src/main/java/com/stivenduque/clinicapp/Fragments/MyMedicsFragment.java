@@ -60,9 +60,9 @@ public class MyMedicsFragment extends Fragment implements  com.android.volley.Re
     }
 
     private void loadWebService() {
-        progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("Consultando...");
-        progressDialog.show();
+        //progressDialog = new ProgressDialog(getContext());
+        //progressDialog.setMessage("Consultando...");
+        //progressDialog.show();
         loadPreferences();
         String url =  getResources().getString(R.string.url)+ "Consulta_medics.php?user_id="+idPreferences;
         Log.d("UURRLL",url);
@@ -78,7 +78,7 @@ public class MyMedicsFragment extends Fragment implements  com.android.volley.Re
     public void onErrorResponse(VolleyError error) {
         Toast.makeText(getContext(), "No hay consulta "+ error.toString(),Toast.LENGTH_SHORT).show();
         Log.d("NoExiste",error.toString());
-        progressDialog.hide();
+        //progressDialog.hide();
     }
 
     @Override
@@ -96,7 +96,7 @@ public class MyMedicsFragment extends Fragment implements  com.android.volley.Re
                 Log.d("2333", user.getName());
                 userArrayList.add(user);
                 }
-                progressDialog.hide();
+                //progressDialog.hide();
             UserAdapter userAdapter  = new UserAdapter(userArrayList);
             recyclerViewUser.setAdapter(userAdapter);
             } catch (JSONException e) {

@@ -7,7 +7,8 @@
         <item
             android:id="@+id/nav_my_account"
             android:icon="@drawable/ic_person"
-            android:title="Mi cuenta" />
+            android:title="Mi cuenta"
+            />
         <item
             android:id="@+id/nav_add_familiary"
             android:icon="@drawable/ic_person_add"
@@ -19,7 +20,8 @@
         <item
             android:id="@+id/nav_change_language"
             android:icon="@drawable/ic_traductor"
-            android:title="Cambiar idioma" />
+            android:title="Cambiar idioma"
+            />
     </group>
 
     <item android:title="close session">
@@ -27,11 +29,13 @@
             <item
                 android:id="@+id/nav_close_session"
                 android:icon="@drawable/ic_exit_to_app"
-                android:title="Cerrar sesion" />
+                android:title="Cerrar sesion"
+                />
             <item
                 android:id="@+id/nav_get_out"
                 android:icon="@drawable/ic_power_settings_new"
-                android:title="Salir" />
+                android:title="Salir"
+                />
         </menu>
     </item>
 

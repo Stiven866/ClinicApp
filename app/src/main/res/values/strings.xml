@@ -80,5 +80,6 @@
         <item>Santander</item>
     </string-array>
     <string name="title_activity_maps_famacias">Map</string>
+    <string name="title_activity_maps_pharmacies">Map</string>
 
 </resources>

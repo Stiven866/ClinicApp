@@ -3,7 +3,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -30,9 +29,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.stivenduque.clinicapp.Fragments.BlankFragment3;
-import com.stivenduque.clinicapp.Fragments.BlankFragment4;
 import com.stivenduque.clinicapp.Fragments.MyMedicsFragment;
 import com.stivenduque.clinicapp.Entidades.User;
 import com.stivenduque.clinicapp.R;
@@ -41,8 +38,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MenuProfile extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener, com.android.volley.Response.Listener<JSONObject>, com.android.volley.Response.ErrorListener {
+public class MenuProfile extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener, com.android.volley.Response.Listener<JSONObject>, com.android.volley.Response.ErrorListener {
     TextView tvDrawerUsername, tvDrawerEmail, tvTypeUser;
     BottomNavigationView bottomNavigationView;
     private FirebaseAuth firebaseAuth;
@@ -75,14 +71,14 @@ public class MenuProfile extends AppCompatActivity
                 Fragment fragment = null;
                 switch (item.getItemId()) {
                     case R.id.my_history:
-                        fragment = new  BlankFragment4();
+                        fragment = new  BlankFragment3();
                         break;
                     case R.id.my_doctors:
                         fragment = new MyMedicsFragment();
                         break;
                     case R.id.pharmacies:
-                        fragment = new  BlankFragment4();
-                        break;
+                        goToMapsPharmacies();
+                        return true;
                     case R.id.medic_center:
                         fragment = new BlankFragment3();
                         break;
@@ -103,6 +99,8 @@ public class MenuProfile extends AppCompatActivity
         tvDrawerEmail = headerView.findViewById(R.id.tv_drawer_user_email);
 
     }
+
+
 
 
     @Override
@@ -150,7 +148,7 @@ public class MenuProfile extends AppCompatActivity
                 fragment = new BlankFragment3();
                 break;
             case R.id.nav_change_pass:
-                fragment = new BlankFragment4();
+                fragment = new BlankFragment3();
                 break;
             case R.id.nav_change_language:
                 goToChat();
@@ -178,11 +176,12 @@ public class MenuProfile extends AppCompatActivity
 
 
     @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {}
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    }
 
     private void setInitialFragment() {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.content, new BlankFragment4());
+        fragmentTransaction.add(R.id.content, new BlankFragment3());
         fragmentTransaction.commit();
     }
 
@@ -290,6 +289,11 @@ public class MenuProfile extends AppCompatActivity
     }
     private void goToChat() {
         Intent intent = new Intent(MenuProfile.this, ChatActivity.class);
+        startActivityForResult(intent,0);
+    }
+
+    private void goToMapsPharmacies() {
+        Intent intent = new Intent(MenuProfile.this, MapsPharmacies.class);
         startActivityForResult(intent,0);
     }
 }

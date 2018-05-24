@@ -53,8 +53,8 @@
     <string name="Articulo.p1">Mi primer articulo</string>
     <string name="Articulo.texto">Esta es mi primera prueba con un articulo</string>
     <string name="title_activity_register_tabs">RegisterTabs</string>
-    <string name="tab_text_1">Register</string>
-    <string name="tab_text_2">Con correo</string>
+    <string name="tab_text_1">Paciente</string>
+    <string name="tab_text_2">Medico</string>
     <string name="tab_text_3">MIS DATOS</string>
     <string name="tab_text_4">MI SALUD</string>
     <string name="section_format">Hello World from section: %1$d</string>

@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.stivenduque.clinicapp.Fragments.Articulos;
+import com.stivenduque.clinicapp.Fragments.MedicFragment;
 import com.stivenduque.clinicapp.Fragments.PatientFragment;
 import com.stivenduque.clinicapp.R;
 
@@ -58,7 +59,7 @@ public class RegisterTabs extends AppCompatActivity {
                     fragment = new PatientFragment();
                     break;
                 case 2:
-                    fragment = new Articulos();
+                    fragment = new MedicFragment();
                     break;
             }
             Bundle args = new Bundle();

@@ -1,14 +1,13 @@
 package com.stivenduque.clinicapp.Fragments;
 
-
 import android.app.Activity;
-import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,17 +23,13 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.common.api.Response;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.stivenduque.clinicapp.Activity.RegisterTabs;
 import com.stivenduque.clinicapp.Entidades.User;
 import com.stivenduque.clinicapp.Entidades.Usuario;
 import com.stivenduque.clinicapp.R;
@@ -43,13 +38,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executor;
 
 import static android.app.Activity.RESULT_OK;
 
-public class PatientFragment extends Fragment implements com.android.volley.Response.Listener<JSONObject>, com.android.volley.Response.ErrorListener {
+public class MedicFragment extends Fragment implements com.android.volley.Response.Listener<JSONObject>, com.android.volley.Response.ErrorListener{
     EditText etUserName, etLastName, etEmail, etIdentification, etPassword, etPasswordRepeat, etAge, etCivilState, etPhone;
     TextView tvGgoToLogin;
     Button btnRegister;
@@ -65,51 +58,44 @@ public class PatientFragment extends Fragment implements com.android.volley.Resp
     //private DatabaseReference referenceUser;
     private FirebaseAuth mAuth;
     Activity activity;
-    public PatientFragment() {
-        // Required empty public constructor
-    }
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
 
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_patient, container, false);
+        View view = inflater.inflate(R.layout.fragment_medic, container, false);
         activity = getActivity();
         initUi(view);
         initActions();
         return view;
     }
 
-
-
     private void initUi(View view) {
-        etUserName = view.findViewById(R.id.et_register_names);
-        etLastName = view.findViewById(R.id.et_register_lastnames);
-        etEmail = view.findViewById(R.id.et_register_email);
-        etIdentification = view.findViewById(R.id.et_register_identification);
-        etPassword = view.findViewById(R.id.et_register_password);
-        etPasswordRepeat = view.findViewById(R.id.et_register_password_repeat);
-        etAge = view.findViewById(R.id.et_register_age);
-        //etCivilState = view.findViewById(R.id.et_register_civil_state);
-        etPhone = view.findViewById(R.id.et_register_phone);
-        rbtnFamale = view.findViewById(R.id.rbFamale);
-        rbtnMale = view.findViewById(R.id.rbMale);
-        tvGgoToLogin = view.findViewById(R.id.txv_goto_login);
-        btnRegister = view.findViewById(R.id.btn_register);
+        etUserName = view.findViewById(R.id.et_register_names_medic);
+        etLastName = view.findViewById(R.id.et_register_lastnames_medic);
+        etEmail = view.findViewById(R.id.et_register_email_medic);
+        etIdentification = view.findViewById(R.id.et_register_identification_medic);
+        etPassword = view.findViewById(R.id.et_register_password_medic);
+        etPasswordRepeat = view.findViewById(R.id.et_register_password_repeat_medic);
+        etAge = view.findViewById(R.id.et_register_age_medic);
+        //etCivilState = view.findViewById(R.id.et_register_civil_state_medic);
+        etPhone = view.findViewById(R.id.et_register_phone_medic);
+        rbtnFamale = view.findViewById(R.id.rbFamale_medic);
+        rbtnMale = view.findViewById(R.id.rbMale_medic);
+        //tvGgoToLogin = view.findViewById(R.id.txv_goto_login);
+        btnRegister = view.findViewById(R.id.btn_register_medic);
         database = FirebaseDatabase.getInstance();
         //referenceUser = database.getReference("User");
         mAuth = FirebaseAuth.getInstance();
         request = Volley.newRequestQueue(getContext());
     }
-
-
     public void initActions() {
-        tvGgoToLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToLogin();
-            }
-        });
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -261,29 +247,29 @@ public class PatientFragment extends Fragment implements com.android.volley.Resp
     private boolean initDataBase() {
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(user.getEmail(),user.getPsw())
                 .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                Log.d("RegisterFIREBASE ",String.valueOf(task.isSuccessful()));
-                flagPrueba = false;
-                if (task.isSuccessful()){
-                    Log.d("RegisterFIREBASE ",String.valueOf(task.isSuccessful()));
-                    Usuario usuario = new Usuario();
-                    usuario.setName(user.getName());
-                    usuario.setEmail(user.getEmail());
-                    FirebaseUser currentUser = mAuth.getCurrentUser();
-                    DatabaseReference reference = database.getReference("User/"+currentUser.getUid());
-                    reference.setValue(usuario);
-                    FirebaseAuth.getInstance().signOut();
-                    //Toast.makeText(activity,"El usuario ha sido registrado existosamente",Toast.LENGTH_SHORT).show();
-                    loadWebService();
-                     flagPrueba = true;
-                    //goToLogin();
-                }else{
-                    Log.d("SESION","Error en la cuenta");
-                    flagPrueba = false;
-                }
-            }
-        });
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d("RegisterFIREBASE ",String.valueOf(task.isSuccessful()));
+                        flagPrueba = false;
+                        if (task.isSuccessful()){
+                            Log.d("RegisterFIREBASE ",String.valueOf(task.isSuccessful()));
+                            Usuario usuario = new Usuario();
+                            usuario.setName(user.getName());
+                            usuario.setEmail(user.getEmail());
+                            FirebaseUser currentUser = mAuth.getCurrentUser();
+                            DatabaseReference reference = database.getReference("User/"+currentUser.getUid());
+                            reference.setValue(usuario);
+                            FirebaseAuth.getInstance().signOut();
+                            //Toast.makeText(activity,"El usuario ha sido registrado existosamente",Toast.LENGTH_SHORT).show();
+                            loadWebService();
+                            flagPrueba = true;
+                            //goToLogin();
+                        }else{
+                            Log.d("SESION","Error en la cuenta");
+                            flagPrueba = false;
+                        }
+                    }
+                });
         return flagPrueba;
     }
 
@@ -303,4 +289,5 @@ public class PatientFragment extends Fragment implements com.android.volley.Resp
         super.onStop();
 
     }
+
 }

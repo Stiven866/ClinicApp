@@ -76,9 +76,13 @@ public class MyMedicsFragment extends Fragment implements  com.android.volley.Re
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        Toast.makeText(getContext(), "No hay consulta "+ error.toString(),Toast.LENGTH_SHORT).show();
-        Log.d("NoExiste",error.toString());
-        //progressDialog.hide();
+        if (error.toString().equals("com.android.volley.TimeoutError")){
+            Toast.makeText(getContext(), "No tiene acceso a internet",Toast.LENGTH_SHORT).show();
+
+        }else {
+            Toast.makeText(getContext(), "El usuario no existe "+ error.toString(),Toast.LENGTH_SHORT).show();
+            Log.d("NoExiste",error.toString());
+        }
     }
 
     @Override

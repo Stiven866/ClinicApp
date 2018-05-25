@@ -121,8 +121,14 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        Toast.makeText(this, "El usuario no existe "+ error.toString(),Toast.LENGTH_SHORT).show();
-        Log.d("NoExiste",error.toString());
+        if (error.toString().equals("com.android.volley.TimeoutError")){
+            Toast.makeText(this, "No tiene acceso a internet",Toast.LENGTH_SHORT).show();
+
+        }else {
+            Toast.makeText(this, "El usuario no existe "+ error.toString(),Toast.LENGTH_SHORT).show();
+            Log.d("NoExiste",error.toString());
+        }
+
     }
 
     @Override

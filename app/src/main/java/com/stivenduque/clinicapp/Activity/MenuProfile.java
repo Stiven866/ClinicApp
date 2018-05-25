@@ -29,6 +29,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
+import com.stivenduque.clinicapp.Fragments.MyHealth;
 import com.stivenduque.clinicapp.Fragments.BlankFragment3;
 import com.stivenduque.clinicapp.Fragments.MyMedicsFragment;
 import com.stivenduque.clinicapp.Entidades.User;
@@ -49,6 +50,9 @@ public class MenuProfile extends AppCompatActivity implements NavigationView.OnN
     ProgressDialog progressDialog;
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
+    private MenuItem mImyAccount, mIaddFamiliary,mIchangePass,mIchangeLanguage,mImyHistory,mImyDoctors,mIpharmacies,mImedicCenter;
+    private int flag = 0;
+    Fragment fragment = null;
 
 
     @Override
@@ -64,21 +68,31 @@ public class MenuProfile extends AppCompatActivity implements NavigationView.OnN
         toggle.syncState();
         initDataBase();
         setInitialFragment();
+
+
+
         bottomNavigationView = findViewById(R.id.navigationView);
+        Menu menuBnav = bottomNavigationView.getMenu();
+        mImyHistory = menuBnav.findItem(R.id.my_history);
+        mImyDoctors = menuBnav.findItem(R.id.my_doctors);
+        mIpharmacies = menuBnav.findItem(R.id.pharmacies);
+        mImedicCenter = menuBnav.findItem(R.id.medic_center);
+
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Fragment fragment = null;
                 switch (item.getItemId()) {
                     case R.id.my_history:
-                        fragment = new  BlankFragment3();
+                        fragment = new BlankFragment3();
                         break;
                     case R.id.my_doctors:
                         fragment = new MyMedicsFragment();
                         break;
                     case R.id.pharmacies:
                         goToMapsPharmacies();
+                        mIpharmacies.setChecked(false);
                         return true;
+                        //break;
                     case R.id.medic_center:
                         fragment = new BlankFragment3();
                         break;
@@ -90,8 +104,15 @@ public class MenuProfile extends AppCompatActivity implements NavigationView.OnN
 
         request = Volley.newRequestQueue(this);
 
-
+        //setItemBottomNavigationView(flag);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        Menu menuNav = navigationView.getMenu();
+        mImyAccount = menuNav.findItem(R.id.nav_my_account);
+        mIaddFamiliary = menuNav.findItem(R.id.nav_add_familiary);
+        mIchangeLanguage = menuNav.findItem(R.id.nav_change_language);
+        mIchangePass = menuNav.findItem(R.id.nav_change_pass);
+
+
 
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
@@ -143,6 +164,8 @@ public class MenuProfile extends AppCompatActivity implements NavigationView.OnN
                 Log.d("abierto", "yes");
                 closeDrawer(item);
                 goToAccount();
+                mImyAccount.setChecked(false);
+                mImyAccount.setCheckable(false);
                 return true;
             case R.id.nav_add_familiary:
                 fragment = new BlankFragment3();
@@ -152,7 +175,8 @@ public class MenuProfile extends AppCompatActivity implements NavigationView.OnN
                 break;
             case R.id.nav_change_language:
                 goToChat();
-                item.setChecked(false);
+                mIchangeLanguage.setChecked(false);
+                mIchangeLanguage.setCheckable(false);
                 return true;
             case R.id.nav_close_session:
                 logOut();
@@ -198,8 +222,14 @@ public class MenuProfile extends AppCompatActivity implements NavigationView.OnN
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        Toast.makeText(this, "No hay consulta "+ error.toString(),Toast.LENGTH_SHORT).show();
-        Log.d("NoExiste",error.toString());
+        if (error.toString().equals("com.android.volley.TimeoutError")){
+            Toast.makeText(this, "No tiene acceso a internet",Toast.LENGTH_SHORT).show();
+            finish();
+
+        }else {
+            Toast.makeText(this, "El usuario no existe "+ error.toString(),Toast.LENGTH_SHORT).show();
+            Log.d("NoExiste",error.toString());
+        }
     }
 
     @Override
@@ -211,9 +241,20 @@ public class MenuProfile extends AppCompatActivity implements NavigationView.OnN
 
         try {
             jsonObject = jsonArray.getJSONObject(0);
-            user.setName(jsonObject.optString("name"));
-            user.setLasName(jsonObject.optString("lastName"));
-            user.setEmail(jsonObject.optString("email"));
+            if (!(jsonObject.optString("success").equals("false") && jsonObject.optString("message").equals("fail"))) {
+                if (!(jsonObject.optString("success").equals("false") && jsonObject.optString("message").equals("no_existent"))) {
+                    user.setName(jsonObject.optString("name"));
+                    user.setLasName(jsonObject.optString("lastName"));
+                    user.setEmail(jsonObject.optString("email"));
+                }else{
+                    Toast.makeText(this,"Error en la conexion", Toast.LENGTH_SHORT).show();
+                    logOut();
+                }
+
+            }else {
+                logOut();
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

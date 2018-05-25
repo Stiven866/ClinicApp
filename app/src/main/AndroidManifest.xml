@@ -25,6 +25,7 @@
             android:value="@string/facebook_app_id" />
 
         <activity
+            android:theme="@style/AppTheme2"
             android:name=".Activity.MenuProfile"
             android:label="@string/title_activity_menu_profile" />
         <activity android:name=".Activity.Login" />

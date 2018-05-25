@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.stivenduque.clinicapp.Fragments.BlankFragment3;
 import com.stivenduque.clinicapp.Fragments.MyAccountPatient;
+import com.stivenduque.clinicapp.Fragments.MyHealth;
 import com.stivenduque.clinicapp.R;
 
 public class MyAccount extends AppCompatActivity  {
@@ -90,7 +91,7 @@ public class MyAccount extends AppCompatActivity  {
                     fragment = new MyAccountPatient();
                     break;
                 case 2:
-                    fragment = new BlankFragment3();
+                    fragment = new MyHealth();
                     break;
 
             }

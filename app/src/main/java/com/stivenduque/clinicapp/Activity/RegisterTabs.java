@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
-import com.stivenduque.clinicapp.Fragments.Articulos;
 import com.stivenduque.clinicapp.Fragments.MedicFragment;
 import com.stivenduque.clinicapp.Fragments.PatientFragment;
 import com.stivenduque.clinicapp.R;

@@ -94,11 +94,19 @@ public class MyMedicsFragment extends Fragment implements  com.android.volley.Re
                 user = new  User();
                 JSONObject jsonObject = null;
                 jsonObject = jsonArray.getJSONObject(i);
-                user.setId(jsonObject.optString("id"));
-                user.setName(jsonObject.optString("name"));
-                user.setPhone(jsonObject.optString("phone"));
-                Log.d("2333", user.getName());
-                userArrayList.add(user);
+                if (!(jsonObject.optString("success").equals("false") && jsonObject.optString("message").equals("fail"))) {
+                    if (!(jsonObject.optString("success").equals("false") && jsonObject.optString("message").equals("no_existent"))) {
+                        user.setId(jsonObject.optString("id"));
+                        user.setName(jsonObject.optString("name"));
+                        user.setPhone(jsonObject.optString("phone"));
+                        Log.d("2333", user.getName());
+                        userArrayList.add(user);
+                    }else{
+                        Toast.makeText(getContext(),"No tiene medicos", Toast.LENGTH_SHORT).show();
+                    }
+                }else {
+
+                }
                 }
                 //progressDialog.hide();
             UserAdapter userAdapter  = new UserAdapter(userArrayList);

@@ -3,6 +3,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -214,6 +217,16 @@ public class MenuProfile extends AppCompatActivity implements NavigationView.OnN
         fragmentTransaction.replace(R.id.content, fragment);
         fragmentTransaction.commit();
     }
+    private boolean isNetworkConnected(Context context) {
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context
+                .CONNECTIVITY_SERVICE);
+        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
+        if (info == null || !info.isConnected() || !info.isAvailable()) {
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -266,19 +279,25 @@ public class MenuProfile extends AppCompatActivity implements NavigationView.OnN
     @Override
     protected void onStart() {
         super.onStart();
-        loadPreferences();
-        if (idPreferences == null){
-            //Log.d("User", idPreferences);
-            logOut();
-            goToLogin();
-        }else {
-            Log.d("User", "Usuario logueado");
-            String url = getResources().getString(R.string.url)+ "Consulta.php?id="+idPreferences;
-            Log.d("User", url);
-            jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null, this, this);
-            request.add(jsonObjectRequest);
+
+
+
+        if (isNetworkConnected(this) == true){
+            loadPreferences();
+            if (idPreferences == null){
+                //Log.d("User", idPreferences);
+                logOut();
+                goToLogin();
+            }else {
+                Log.d("User", "Usuario logueado");
+                String url = getResources().getString(R.string.url)+ "Consulta.php?id="+idPreferences;
+                Log.d("User", url);
+                jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null, this, this);
+                request.add(jsonObjectRequest);
+            }
         }
-    }
+        }
+
 
     @Override
     protected void onStop() {

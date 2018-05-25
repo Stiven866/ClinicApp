@@ -45,7 +45,7 @@ public class MapsPharmacies extends AppCompatActivity implements OnMapReadyCallb
         TenerMarker(pharm0,"Droguería Todo Drogas",0.9f,0.1f,0.1f);
         TenerMarker(pharm1,"Farmacia Pasteur",0.9f,0.1f,0.1f);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(pharm0));
-        miCamara = CameraUpdateFactory.newLatLngZoom(new LatLng(6.2431894,-75.5790157), 50);
+        miCamara = CameraUpdateFactory.newLatLngZoom(new LatLng(6.2431894,-75.5790157), 10);
         mMap.animateCamera(miCamara);
         //mMap.addMarker(new MarkerOptions().position(sydney).title("Droguería Pasteur"));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
